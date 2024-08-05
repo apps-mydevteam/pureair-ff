@@ -1,0 +1,142 @@
+{
+  "project_info": {
+    "project_number": "794070351747",
+    "project_id": "openbit-mydevteam",
+    "storage_bucket": "openbit-mydevteam.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:794070351747:android:7ae6d9887274d738fdc0b6",
+        "android_client_info": {
+          "package_name": "com.mydevteam.openbit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "794070351747-93j3tu4q8j4s9dqu8v1ced9puueiso9k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mydevteam.openbit",
+            "certificate_hash": "9bbb3186b2189ef16d8f272bdab59362c395cbb4"
+          }
+        },
+        {
+          "client_id": "794070351747-8edpbehqqmuk1d00g2alfkskebe8jecg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAUb3VWnA6sw5wqDX-LyQiHtX_OcLNqmEE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "794070351747-8edpbehqqmuk1d00g2alfkskebe8jecg.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "794070351747-0muihu71qmg2r0c1g9egi7rskmoto6le.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "openbitf.mydevteam.id"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:794070351747:android:fba52405017df568fdc0b6",
+        "android_client_info": {
+          "package_name": "openbitf.mydevteam.id"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "794070351747-dae6dtufgei9h7v898qefuh5qkqu6a25.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "openbitf.mydevteam.id",
+            "certificate_hash": "9bbb3186b2189ef16d8f272bdab59362c395cbb4"
+          }
+        },
+        {
+          "client_id": "794070351747-8edpbehqqmuk1d00g2alfkskebe8jecg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAUb3VWnA6sw5wqDX-LyQiHtX_OcLNqmEE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "794070351747-8edpbehqqmuk1d00g2alfkskebe8jecg.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "794070351747-0muihu71qmg2r0c1g9egi7rskmoto6le.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "openbitf.mydevteam.id"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:794070351747:android:3c564d5ea4944abcfdc0b6",
+        "android_client_info": {
+          "package_name": "pureair.linkbot.sg"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "794070351747-u8l1vr50mtp3kv547lj33d146vuocpos.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "pureair.linkbot.sg",
+            "certificate_hash": "9bbb3186b2189ef16d8f272bdab59362c395cbb4"
+          }
+        },
+        {
+          "client_id": "794070351747-8edpbehqqmuk1d00g2alfkskebe8jecg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAUb3VWnA6sw5wqDX-LyQiHtX_OcLNqmEE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "794070351747-8edpbehqqmuk1d00g2alfkskebe8jecg.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "794070351747-0muihu71qmg2r0c1g9egi7rskmoto6le.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "openbitf.mydevteam.id"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

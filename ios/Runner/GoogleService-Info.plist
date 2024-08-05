@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>794070351747-7l352gbd3phtcvbaqsdnur2shplodlo9.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.794070351747-7l352gbd3phtcvbaqsdnur2shplodlo9</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>794070351747-93j3tu4q8j4s9dqu8v1ced9puueiso9k.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCaRPfc3NiQdv9ZijXHsE-oMu6Af4Guhhk</string>
+	<key>GCM_SENDER_ID</key>
+	<string>794070351747</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>pureair.linkbot.sg</string>
+	<key>PROJECT_ID</key>
+	<string>openbit-mydevteam</string>
+	<key>STORAGE_BUCKET</key>
+	<string>openbit-mydevteam.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:794070351747:ios:54da26072f040743fdc0b6</string>
+</dict>
+</plist>
