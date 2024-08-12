@@ -13,6 +13,7 @@ import 'package:provider/provider.dart';
 class PopUpNewAddressModel extends FlutterFlowModel<PopUpNewAddressWidget> {
   ///  State fields for stateful widgets in this component.
 
+  final formKey = GlobalKey<FormState>();
   // State field(s) for namepostalcode widget.
   FocusNode? namepostalcodeFocusNode;
   TextEditingController? namepostalcodeTextController;

@@ -16,7 +16,6 @@ import 'package:provider/provider.dart';
 class Booking22Model extends FlutterFlowModel<Booking22Widget> {
   ///  State fields for stateful widgets in this page.
 
-  final unfocusNode = FocusNode();
   // State field(s) for Expandable widget.
   late ExpandableController expandableExpandableController1;
 
@@ -49,7 +48,6 @@ class Booking22Model extends FlutterFlowModel<Booking22Widget> {
 
   @override
   void dispose() {
-    unfocusNode.dispose();
     expandableExpandableController1.dispose();
     expandableExpandableController2.dispose();
     expandableExpandableController3.dispose();

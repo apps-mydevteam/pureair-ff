@@ -1,5 +1,7 @@
 import '/auth/firebase_auth/auth_util.dart';
+import '/backend/api_requests/api_calls.dart';
 import '/backend/backend.dart';
+import '/backend/supabase/supabase.dart';
 import '/flutter_flow/flutter_flow_animations.dart';
 import '/flutter_flow/flutter_flow_button_tabbar.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
@@ -19,7 +21,6 @@ import 'package:provider/provider.dart';
 class AuthPageModel extends FlutterFlowModel<AuthPageWidget> {
   ///  State fields for stateful widgets in this page.
 
-  final unfocusNode = FocusNode();
   // State field(s) for TabBar widget.
   TabController? tabBarController;
   int get tabBarCurrentIndex =>
@@ -66,35 +67,36 @@ class AuthPageModel extends FlutterFlowModel<AuthPageWidget> {
   FocusNode? emailCreateFocusNode;
   TextEditingController? emailCreateTextController;
   String? Function(BuildContext, String?)? emailCreateTextControllerValidator;
-  // State field(s) for emailLogin widget.
-  FocusNode? emailLoginFocusNode1;
-  TextEditingController? emailLoginTextController1;
-  String? Function(BuildContext, String?)? emailLoginTextController1Validator;
-  // State field(s) for emailLogin widget.
-  FocusNode? emailLoginFocusNode2;
-  TextEditingController? emailLoginTextController2;
-  String? Function(BuildContext, String?)? emailLoginTextController2Validator;
-  // State field(s) for emailLogin widget.
-  FocusNode? emailLoginFocusNode3;
-  TextEditingController? emailLoginTextController3;
-  String? Function(BuildContext, String?)? emailLoginTextController3Validator;
-  // State field(s) for emailLogin widget.
-  FocusNode? emailLoginFocusNode4;
-  TextEditingController? emailLoginTextController4;
-  String? Function(BuildContext, String?)? emailLoginTextController4Validator;
-  // State field(s) for emailLogin widget.
-  FocusNode? emailLoginFocusNode5;
-  TextEditingController? emailLoginTextController5;
-  String? Function(BuildContext, String?)? emailLoginTextController5Validator;
+  // State field(s) for PostalName widget.
+  FocusNode? postalNameFocusNode;
+  TextEditingController? postalNameTextController;
+  String? Function(BuildContext, String?)? postalNameTextControllerValidator;
+  // State field(s) for Address widget.
+  FocusNode? addressFocusNode;
+  TextEditingController? addressTextController;
+  String? Function(BuildContext, String?)? addressTextControllerValidator;
+  // State field(s) for PostalCode widget.
+  FocusNode? postalCodeFocusNode;
+  TextEditingController? postalCodeTextController;
+  String? Function(BuildContext, String?)? postalCodeTextControllerValidator;
+  // State field(s) for unitLevel widget.
+  FocusNode? unitLevelFocusNode;
+  TextEditingController? unitLevelTextController;
+  String? Function(BuildContext, String?)? unitLevelTextControllerValidator;
+  // State field(s) for unitNumber widget.
+  FocusNode? unitNumberFocusNode;
+  TextEditingController? unitNumberTextController;
+  String? Function(BuildContext, String?)? unitNumberTextControllerValidator;
   // State field(s) for ConfirmCheckbox widget.
   bool? confirmCheckboxValue;
+  // Stores action output result for [Backend Call - API (Create User Supabase)] action in Button-Login widget.
+  ApiCallResponse? apiResultxpl;
 
   @override
   void initState(BuildContext context) {}
 
   @override
   void dispose() {
-    unfocusNode.dispose();
     tabBarController?.dispose();
     phoneLoginFocusNode?.dispose();
     phoneLoginTextController?.dispose();
@@ -126,19 +128,19 @@ class AuthPageModel extends FlutterFlowModel<AuthPageWidget> {
     emailCreateFocusNode?.dispose();
     emailCreateTextController?.dispose();
 
-    emailLoginFocusNode1?.dispose();
-    emailLoginTextController1?.dispose();
+    postalNameFocusNode?.dispose();
+    postalNameTextController?.dispose();
 
-    emailLoginFocusNode2?.dispose();
-    emailLoginTextController2?.dispose();
+    addressFocusNode?.dispose();
+    addressTextController?.dispose();
 
-    emailLoginFocusNode3?.dispose();
-    emailLoginTextController3?.dispose();
+    postalCodeFocusNode?.dispose();
+    postalCodeTextController?.dispose();
 
-    emailLoginFocusNode4?.dispose();
-    emailLoginTextController4?.dispose();
+    unitLevelFocusNode?.dispose();
+    unitLevelTextController?.dispose();
 
-    emailLoginFocusNode5?.dispose();
-    emailLoginTextController5?.dispose();
+    unitNumberFocusNode?.dispose();
+    unitNumberTextController?.dispose();
   }
 }

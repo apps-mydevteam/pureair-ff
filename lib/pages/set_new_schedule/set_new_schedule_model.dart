@@ -11,7 +11,6 @@ import 'package:provider/provider.dart';
 class SetNewScheduleModel extends FlutterFlowModel<SetNewScheduleWidget> {
   ///  State fields for stateful widgets in this page.
 
-  final unfocusNode = FocusNode();
   // Model for PopUpSetNewSchedule component.
   late PopUpSetNewScheduleModel popUpSetNewScheduleModel;
 
@@ -23,7 +22,6 @@ class SetNewScheduleModel extends FlutterFlowModel<SetNewScheduleWidget> {
 
   @override
   void dispose() {
-    unfocusNode.dispose();
     popUpSetNewScheduleModel.dispose();
   }
 }

@@ -11,7 +11,6 @@ import 'package:provider/provider.dart';
 class BookingDetailModel extends FlutterFlowModel<BookingDetailWidget> {
   ///  State fields for stateful widgets in this page.
 
-  final unfocusNode = FocusNode();
   // Model for PopUpDetail component.
   late PopUpDetailModel popUpDetailModel;
 
@@ -22,7 +21,6 @@ class BookingDetailModel extends FlutterFlowModel<BookingDetailWidget> {
 
   @override
   void dispose() {
-    unfocusNode.dispose();
     popUpDetailModel.dispose();
   }
 }

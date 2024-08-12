@@ -82,23 +82,14 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
       debugLogDiagnostics: true,
       refreshListenable: appStateNotifier,
       errorBuilder: (context, state) =>
-          appStateNotifier.loggedIn ? HomePageWidget() : AuthPageWidget(),
+          appStateNotifier.loggedIn ? HomePageCopyWidget() : AuthPageWidget(),
       routes: [
         FFRoute(
           name: '_initialize',
           path: '/',
-          builder: (context, _) =>
-              appStateNotifier.loggedIn ? HomePageWidget() : AuthPageWidget(),
-        ),
-        FFRoute(
-          name: 'HomePage',
-          path: '/homePage',
-          builder: (context, params) => HomePageWidget(
-            devmode: params.getParam(
-              'devmode',
-              ParamType.bool,
-            ),
-          ),
+          builder: (context, _) => appStateNotifier.loggedIn
+              ? HomePageCopyWidget()
+              : AuthPageWidget(),
         ),
         FFRoute(
           name: 'AuthPage',
@@ -115,9 +106,41 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           ),
         ),
         FFRoute(
-          name: 'Booking1',
-          path: '/booking1',
-          builder: (context, params) => Booking1Widget(
+          name: 'BookingForm1',
+          path: '/bookingForm1',
+          builder: (context, params) => BookingForm1Widget(
+            devmode: params.getParam(
+              'devmode',
+              ParamType.bool,
+            ),
+            customerId: params.getParam(
+              'customerId',
+              ParamType.String,
+            ),
+          ),
+        ),
+        FFRoute(
+          name: 'BookingForm2',
+          path: '/bookingForm2',
+          builder: (context, params) => BookingForm2Widget(
+            devmode: params.getParam(
+              'devmode',
+              ParamType.bool,
+            ),
+            needLeader: params.getParam(
+              'needLeader',
+              ParamType.bool,
+            ),
+            customeraddressId: params.getParam(
+              'customeraddressId',
+              ParamType.int,
+            ),
+          ),
+        ),
+        FFRoute(
+          name: 'Booking2-2',
+          path: '/booking22',
+          builder: (context, params) => Booking22Widget(
             devmode: params.getParam(
               'devmode',
               ParamType.bool,
@@ -155,9 +178,9 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           ),
         ),
         FFRoute(
-          name: 'Booking2',
-          path: '/booking2',
-          builder: (context, params) => Booking2Widget(
+          name: 'HomePage',
+          path: '/homePage',
+          builder: (context, params) => HomePageWidget(
             devmode: params.getParam(
               'devmode',
               ParamType.bool,
@@ -165,14 +188,9 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           ),
         ),
         FFRoute(
-          name: 'Profile',
-          path: '/profile',
-          builder: (context, params) => ProfileWidget(),
-        ),
-        FFRoute(
-          name: 'Booking2-2',
-          path: '/booking22',
-          builder: (context, params) => Booking22Widget(
+          name: 'Profiles',
+          path: '/profiles',
+          builder: (context, params) => ProfilesWidget(
             devmode: params.getParam(
               'devmode',
               ParamType.bool,
@@ -180,59 +198,49 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           ),
         ),
         FFRoute(
-          name: 'Booking1Copy',
-          path: '/booking1Copy',
-          builder: (context, params) => Booking1CopyWidget(
-            devmode: params.getParam(
-              'devmode',
-              ParamType.bool,
+          name: 'SetNewSchedule',
+          path: '/setNewSchedule',
+          builder: (context, params) => SetNewScheduleWidget(
+            orderId: params.getParam(
+              'orderId',
+              ParamType.int,
             ),
           ),
         ),
         FFRoute(
-          name: 'Booking2Copy',
-          path: '/booking2Copy',
-          builder: (context, params) => Booking2CopyWidget(
-            devmode: params.getParam(
-              'devmode',
-              ParamType.bool,
+          name: 'BookingDetail',
+          path: '/bookingDetail',
+          builder: (context, params) => BookingDetailWidget(
+            orderId: params.getParam(
+              'orderId',
+              ParamType.int,
             ),
           ),
         ),
         FFRoute(
-          name: 'Booking2-2Copy',
-          path: '/booking22Copy',
-          builder: (context, params) => Booking22CopyWidget(
-            devmode: params.getParam(
-              'devmode',
-              ParamType.bool,
+          name: 'BookingCancellation',
+          path: '/bookingCancellation',
+          builder: (context, params) => BookingCancellationWidget(
+            orderId: params.getParam(
+              'orderId',
+              ParamType.int,
             ),
           ),
         ),
         FFRoute(
-          name: 'Booking2-3Copy',
-          path: '/booking23Copy',
-          builder: (context, params) => Booking23CopyWidget(
-            devmode: params.getParam(
-              'devmode',
-              ParamType.bool,
+          name: 'BookingInvoice',
+          path: '/BookingInvoice',
+          builder: (context, params) => BookingInvoiceWidget(
+            orderId: params.getParam(
+              'orderId',
+              ParamType.int,
             ),
           ),
         ),
         FFRoute(
-          name: 'Booking2-4Copy',
-          path: '/booking24Copy',
-          builder: (context, params) => Booking24CopyWidget(
-            devmode: params.getParam(
-              'devmode',
-              ParamType.bool,
-            ),
-          ),
-        ),
-        FFRoute(
-          name: 'Booking2-5Copy',
-          path: '/booking25Copy',
-          builder: (context, params) => Booking25CopyWidget(
+          name: 'ProfilesCopy',
+          path: '/profilesCopy',
+          builder: (context, params) => ProfilesCopyWidget(
             devmode: params.getParam(
               'devmode',
               ParamType.bool,
@@ -250,74 +258,9 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           ),
         ),
         FFRoute(
-          name: 'ProfileCopy',
-          path: '/profileCopy',
-          builder: (context, params) => ProfileCopyWidget(
-            devmode: params.getParam(
-              'devmode',
-              ParamType.bool,
-            ),
-          ),
-        ),
-        FFRoute(
-          name: 'SetNewSchedule',
-          path: '/setNewSchedule',
-          builder: (context, params) => SetNewScheduleWidget(),
-        ),
-        FFRoute(
-          name: 'Reschedule-MonthlyCopy',
-          path: '/rescheduleMonthlyCopy',
-          builder: (context, params) => RescheduleMonthlyCopyWidget(),
-        ),
-        FFRoute(
-          name: 'BookingDetail',
-          path: '/bookingDetail',
-          builder: (context, params) => BookingDetailWidget(),
-        ),
-        FFRoute(
-          name: 'BookingCancellation',
-          path: '/bookingCancellation',
-          builder: (context, params) => BookingCancellationWidget(),
-        ),
-        FFRoute(
-          name: 'BookingInvoice',
-          path: '/BookingInvoice',
-          builder: (context, params) => BookingInvoiceWidget(),
-        ),
-        FFRoute(
-          name: 'Reschedule-WeeklyCopy',
-          path: '/rescheduleWeeklyCopy',
-          builder: (context, params) => RescheduleWeeklyCopyWidget(),
-        ),
-        FFRoute(
-          name: 'PopUpNewAddressCopy',
-          path: '/popUpNewAddressCopy',
-          builder: (context, params) => PopUpNewAddressCopyWidget(),
-        ),
-        FFRoute(
-          name: 'Reschedule2Copy',
-          path: '/reschedule2Copy',
-          builder: (context, params) => Reschedule2CopyWidget(),
-        ),
-        FFRoute(
-          name: 'Reschedule-MonthlyCopyBackup',
-          path: '/rescheduleMonthlyCopyBackup',
-          builder: (context, params) => RescheduleMonthlyCopyBackupWidget(),
-        ),
-        FFRoute(
-          name: 'Reschedule-WeeklyCopyBackup',
-          path: '/rescheduleWeeklyCopyBackup',
-          builder: (context, params) => RescheduleWeeklyCopyBackupWidget(),
-        ),
-        FFRoute(
-          name: 'Booking2-3CopyBackup',
-          path: '/booking23CopyBackup',
-          builder: (context, params) => Booking23CopyBackupWidget(
-            devmode: params.getParam(
-              'devmode',
-              ParamType.bool,
-            ),
-          ),
+          name: 'ContractDetails',
+          path: '/contractDetails',
+          builder: (context, params) => ContractDetailsWidget(),
         )
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
     );

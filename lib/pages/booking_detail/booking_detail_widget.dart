@@ -10,7 +10,12 @@ import 'booking_detail_model.dart';
 export 'booking_detail_model.dart';
 
 class BookingDetailWidget extends StatefulWidget {
-  const BookingDetailWidget({super.key});
+  const BookingDetailWidget({
+    super.key,
+    required this.orderId,
+  });
+
+  final int? orderId;
 
   @override
   State<BookingDetailWidget> createState() => _BookingDetailWidgetState();
@@ -39,9 +44,7 @@ class _BookingDetailWidgetState extends State<BookingDetailWidget> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => _model.unfocusNode.canRequestFocus
-          ? FocusScope.of(context).requestFocus(_model.unfocusNode)
-          : FocusScope.of(context).unfocus(),
+      onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
@@ -50,7 +53,9 @@ class _BookingDetailWidgetState extends State<BookingDetailWidget> {
           child: wrapWithModel(
             model: _model.popUpDetailModel,
             updateCallback: () => setState(() {}),
-            child: PopUpDetailWidget(),
+            child: PopUpDetailWidget(
+              orderId: widget!.orderId!,
+            ),
           ),
         ),
       ),

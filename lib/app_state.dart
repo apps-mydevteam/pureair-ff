@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'flutter_flow/request_manager.dart';
 import '/backend/backend.dart';
 import 'backend/api_requests/api_manager.dart';
 import 'backend/supabase/supabase.dart';
@@ -44,6 +45,36 @@ class FFAppState extends ChangeNotifier {
   set isAdmin(bool value) {
     _isAdmin = value;
   }
+
+  final _orderItemsManager = FutureRequestManager<List<OrderitemsRow>>();
+  Future<List<OrderitemsRow>> orderItems({
+    String? uniqueQueryKey,
+    bool? overrideCache,
+    required Future<List<OrderitemsRow>> Function() requestFn,
+  }) =>
+      _orderItemsManager.performRequest(
+        uniqueQueryKey: uniqueQueryKey,
+        overrideCache: overrideCache,
+        requestFn: requestFn,
+      );
+  void clearOrderItemsCache() => _orderItemsManager.clear();
+  void clearOrderItemsCacheKey(String? uniqueKey) =>
+      _orderItemsManager.clearRequest(uniqueKey);
+
+  final _orderItemNamesManager = FutureRequestManager<List<ServiceitemsRow>>();
+  Future<List<ServiceitemsRow>> orderItemNames({
+    String? uniqueQueryKey,
+    bool? overrideCache,
+    required Future<List<ServiceitemsRow>> Function() requestFn,
+  }) =>
+      _orderItemNamesManager.performRequest(
+        uniqueQueryKey: uniqueQueryKey,
+        overrideCache: overrideCache,
+        requestFn: requestFn,
+      );
+  void clearOrderItemNamesCache() => _orderItemNamesManager.clear();
+  void clearOrderItemNamesCacheKey(String? uniqueKey) =>
+      _orderItemNamesManager.clearRequest(uniqueKey);
 }
 
 void _safeInit(Function() initializeField) {

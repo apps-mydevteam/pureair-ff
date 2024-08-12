@@ -1,5 +1,7 @@
 import '/auth/firebase_auth/auth_util.dart';
+import '/backend/api_requests/api_calls.dart';
 import '/backend/backend.dart';
+import '/backend/supabase/supabase.dart';
 import '/flutter_flow/flutter_flow_animations.dart';
 import '/flutter_flow/flutter_flow_button_tabbar.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
@@ -81,20 +83,20 @@ class _AuthPageWidgetState extends State<AuthPageWidget>
     _model.emailCreateTextController ??= TextEditingController();
     _model.emailCreateFocusNode ??= FocusNode();
 
-    _model.emailLoginTextController1 ??= TextEditingController();
-    _model.emailLoginFocusNode1 ??= FocusNode();
+    _model.postalNameTextController ??= TextEditingController();
+    _model.postalNameFocusNode ??= FocusNode();
 
-    _model.emailLoginTextController2 ??= TextEditingController();
-    _model.emailLoginFocusNode2 ??= FocusNode();
+    _model.addressTextController ??= TextEditingController();
+    _model.addressFocusNode ??= FocusNode();
 
-    _model.emailLoginTextController3 ??= TextEditingController();
-    _model.emailLoginFocusNode3 ??= FocusNode();
+    _model.postalCodeTextController ??= TextEditingController();
+    _model.postalCodeFocusNode ??= FocusNode();
 
-    _model.emailLoginTextController4 ??= TextEditingController();
-    _model.emailLoginFocusNode4 ??= FocusNode();
+    _model.unitLevelTextController ??= TextEditingController();
+    _model.unitLevelFocusNode ??= FocusNode();
 
-    _model.emailLoginTextController5 ??= TextEditingController();
-    _model.emailLoginFocusNode5 ??= FocusNode();
+    _model.unitNumberTextController ??= TextEditingController();
+    _model.unitNumberFocusNode ??= FocusNode();
 
     animationsMap.addAll({
       'containerOnPageLoadAnimation': AnimationInfo(
@@ -158,9 +160,7 @@ class _AuthPageWidgetState extends State<AuthPageWidget>
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => _model.unfocusNode.canRequestFocus
-          ? FocusScope.of(context).requestFocus(_model.unfocusNode)
-          : FocusScope.of(context).unfocus(),
+      onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
@@ -248,7 +248,19 @@ class _AuthPageWidgetState extends State<AuthPageWidget>
                         hoverColor: Colors.transparent,
                         highlightColor: Colors.transparent,
                         onTap: () async {
-                          context.pushNamed('AuthPage');
+                          context.pushNamed(
+                            'AuthPage',
+                            queryParameters: {
+                              'otpCheck': serializeParam(
+                                false,
+                                ParamType.bool,
+                              ),
+                              'phoneNumber': serializeParam(
+                                '',
+                                ParamType.String,
+                              ),
+                            }.withoutNulls,
+                          );
                         },
                         child: Container(
                           width: MediaQuery.sizeOf(context).width * 1.0,
@@ -477,7 +489,8 @@ class _AuthPageWidgetState extends State<AuthPageWidget>
                               }(),
                               480.0,
                             ),
-                            height: MediaQuery.sizeOf(context).height * 0.6,
+                            height:
+                                _model.tabBarCurrentIndex == 0 ? 480.0 : 720.0,
                             decoration: BoxDecoration(),
                             child: Padding(
                               padding: EdgeInsetsDirectional.fromSTEB(
@@ -554,7 +567,7 @@ class _AuthPageWidgetState extends State<AuthPageWidget>
                                                           0.0, -1.0),
                                                   child: Container(
                                                     width: double.infinity,
-                                                    height: 3.0,
+                                                    height: 2.0,
                                                     constraints: BoxConstraints(
                                                       minWidth: double.infinity,
                                                       maxWidth: double.infinity,
@@ -1627,7 +1640,7 @@ class _AuthPageWidgetState extends State<AuthPageWidget>
                                                                 }
 
                                                                 context.goNamedAuth(
-                                                                    'HomePage',
+                                                                    'HomePageCopy',
                                                                     context
                                                                         .mounted);
                                                               },
@@ -1636,7 +1649,7 @@ class _AuthPageWidgetState extends State<AuthPageWidget>
                                                                   FFButtonOptions(
                                                                 width: double
                                                                     .infinity,
-                                                                height: 33.0,
+                                                                height: 36.0,
                                                                 padding: EdgeInsetsDirectional
                                                                     .fromSTEB(
                                                                         0.0,
@@ -1788,7 +1801,7 @@ class _AuthPageWidgetState extends State<AuthPageWidget>
                                                         child: Container(
                                                           width:
                                                               double.infinity,
-                                                          height: 3.0,
+                                                          height: 2.0,
                                                           constraints:
                                                               BoxConstraints(
                                                             minWidth:
@@ -1906,7 +1919,7 @@ class _AuthPageWidgetState extends State<AuthPageWidget>
                                                                       fontFamily:
                                                                           'Montserrat',
                                                                       fontSize:
-                                                                          10.0,
+                                                                          14.0,
                                                                       letterSpacing:
                                                                           0.0,
                                                                       fontWeight:
@@ -1982,7 +1995,7 @@ class _AuthPageWidgetState extends State<AuthPageWidget>
                                                               .override(
                                                                 fontFamily:
                                                                     'Montserrat',
-                                                                fontSize: 10.0,
+                                                                fontSize: 14.0,
                                                                 letterSpacing:
                                                                     0.0,
                                                               ),
@@ -2092,7 +2105,7 @@ class _AuthPageWidgetState extends State<AuthPageWidget>
                                                                         fontFamily:
                                                                             'Montserrat',
                                                                         fontSize:
-                                                                            10.0,
+                                                                            14.0,
                                                                         letterSpacing:
                                                                             0.0,
                                                                         fontWeight:
@@ -2167,7 +2180,7 @@ class _AuthPageWidgetState extends State<AuthPageWidget>
                                                                       fontFamily:
                                                                           'Montserrat',
                                                                       fontSize:
-                                                                          18.0,
+                                                                          14.0,
                                                                       letterSpacing:
                                                                           0.0,
                                                                     ),
@@ -2207,7 +2220,7 @@ class _AuthPageWidgetState extends State<AuthPageWidget>
                                                                       options:
                                                                           FFButtonOptions(
                                                                         width:
-                                                                            120.0,
+                                                                            110.0,
                                                                         height:
                                                                             33.0,
                                                                         padding: EdgeInsetsDirectional.fromSTEB(
@@ -2416,7 +2429,7 @@ class _AuthPageWidgetState extends State<AuthPageWidget>
                                                               .override(
                                                                 fontFamily:
                                                                     'Montserrat',
-                                                                fontSize: 18.0,
+                                                                fontSize: 14.0,
                                                                 letterSpacing:
                                                                     0.0,
                                                               ),
@@ -2498,9 +2511,9 @@ class _AuthPageWidgetState extends State<AuthPageWidget>
                                                                     0.0),
                                                         child: TextFormField(
                                                           controller: _model
-                                                              .emailLoginTextController1,
+                                                              .postalNameTextController,
                                                           focusNode: _model
-                                                              .emailLoginFocusNode1,
+                                                              .postalNameFocusNode,
                                                           obscureText: false,
                                                           decoration:
                                                               InputDecoration(
@@ -2604,7 +2617,7 @@ class _AuthPageWidgetState extends State<AuthPageWidget>
                                                                     0.0,
                                                               ),
                                                           validator: _model
-                                                              .emailLoginTextController1Validator
+                                                              .postalNameTextControllerValidator
                                                               .asValidator(
                                                                   context),
                                                         ),
@@ -2681,9 +2694,9 @@ class _AuthPageWidgetState extends State<AuthPageWidget>
                                                                     0.0),
                                                         child: TextFormField(
                                                           controller: _model
-                                                              .emailLoginTextController2,
+                                                              .addressTextController,
                                                           focusNode: _model
-                                                              .emailLoginFocusNode2,
+                                                              .addressFocusNode,
                                                           obscureText: false,
                                                           decoration:
                                                               InputDecoration(
@@ -2787,7 +2800,7 @@ class _AuthPageWidgetState extends State<AuthPageWidget>
                                                                     0.0,
                                                               ),
                                                           validator: _model
-                                                              .emailLoginTextController2Validator
+                                                              .addressTextControllerValidator
                                                               .asValidator(
                                                                   context),
                                                         ),
@@ -2864,9 +2877,9 @@ class _AuthPageWidgetState extends State<AuthPageWidget>
                                                                     0.0),
                                                         child: TextFormField(
                                                           controller: _model
-                                                              .emailLoginTextController3,
+                                                              .postalCodeTextController,
                                                           focusNode: _model
-                                                              .emailLoginFocusNode3,
+                                                              .postalCodeFocusNode,
                                                           obscureText: false,
                                                           decoration:
                                                               InputDecoration(
@@ -2970,7 +2983,7 @@ class _AuthPageWidgetState extends State<AuthPageWidget>
                                                                     0.0,
                                                               ),
                                                           validator: _model
-                                                              .emailLoginTextController3Validator
+                                                              .postalCodeTextControllerValidator
                                                               .asValidator(
                                                                   context),
                                                         ),
@@ -3050,9 +3063,9 @@ class _AuthPageWidgetState extends State<AuthPageWidget>
                                                               child:
                                                                   TextFormField(
                                                                 controller: _model
-                                                                    .emailLoginTextController4,
+                                                                    .unitLevelTextController,
                                                                 focusNode: _model
-                                                                    .emailLoginFocusNode4,
+                                                                    .unitLevelFocusNode,
                                                                 obscureText:
                                                                     false,
                                                                 decoration:
@@ -3153,7 +3166,7 @@ class _AuthPageWidgetState extends State<AuthPageWidget>
                                                                           0.0,
                                                                     ),
                                                                 validator: _model
-                                                                    .emailLoginTextController4Validator
+                                                                    .unitLevelTextControllerValidator
                                                                     .asValidator(
                                                                         context),
                                                               ),
@@ -3170,9 +3183,9 @@ class _AuthPageWidgetState extends State<AuthPageWidget>
                                                                 child:
                                                                     TextFormField(
                                                                   controller: _model
-                                                                      .emailLoginTextController5,
+                                                                      .unitNumberTextController,
                                                                   focusNode: _model
-                                                                      .emailLoginFocusNode5,
+                                                                      .unitNumberFocusNode,
                                                                   obscureText:
                                                                       false,
                                                                   decoration:
@@ -3272,7 +3285,7 @@ class _AuthPageWidgetState extends State<AuthPageWidget>
                                                                             0.0,
                                                                       ),
                                                                   validator: _model
-                                                                      .emailLoginTextController5Validator
+                                                                      .unitNumberTextControllerValidator
                                                                       .asValidator(
                                                                           context),
                                                                 ),
@@ -3432,66 +3445,147 @@ class _AuthPageWidgetState extends State<AuthPageWidget>
                                                                 () {};
                                                             if (_model
                                                                 .confirmCheckboxValue!) {
-                                                              GoRouter.of(
-                                                                      context)
-                                                                  .prepareAuthEvent();
-                                                              if (_model
-                                                                      .phoneCreateTextController
-                                                                      .text !=
-                                                                  _model
-                                                                      .phoneCreateTextController
-                                                                      .text) {
-                                                                ScaffoldMessenger.of(
-                                                                        context)
-                                                                    .showSnackBar(
-                                                                  SnackBar(
-                                                                    content:
-                                                                        Text(
-                                                                      'Passwords don\'t match!',
-                                                                    ),
-                                                                  ),
-                                                                );
-                                                                return;
-                                                              }
-
-                                                              final user =
-                                                                  await authManager
-                                                                      .createAccountWithEmail(
-                                                                context,
-                                                                _model
+                                                              _model.apiResultxpl =
+                                                                  await CreateUserSupabaseCall
+                                                                      .call(
+                                                                email: _model
                                                                     .emailCreateTextController
                                                                     .text,
-                                                                _model
-                                                                    .phoneCreateTextController
-                                                                    .text,
+                                                                password:
+                                                                    '123456',
                                                               );
-                                                              if (user ==
-                                                                  null) {
-                                                                return;
-                                                              }
 
-                                                              await UsersRecord
-                                                                  .collection
-                                                                  .doc(user.uid)
-                                                                  .update(
-                                                                      createUsersRecordData(
-                                                                    email: _model
+                                                              if ((_model
+                                                                      .apiResultxpl
+                                                                      ?.succeeded ??
+                                                                  true)) {
+                                                                await CustomersTable()
+                                                                    .update(
+                                                                  data: {
+                                                                    'phone': _model
+                                                                        .phoneCreateTextController
+                                                                        .text,
+                                                                    'name': _model
+                                                                        .fullnameCreateTextController
+                                                                        .text,
+                                                                  },
+                                                                  matchingRows:
+                                                                      (rows) =>
+                                                                          rows.eq(
+                                                                    'email',
+                                                                    _model
                                                                         .emailCreateTextController
                                                                         .text,
-                                                                    displayName:
-                                                                        _model
-                                                                            .fullnameCreateTextController
-                                                                            .text,
-                                                                  ));
+                                                                  ),
+                                                                );
+                                                                GoRouter.of(
+                                                                        context)
+                                                                    .prepareAuthEvent();
+                                                                if (_model
+                                                                        .phoneCreateTextController
+                                                                        .text !=
+                                                                    _model
+                                                                        .phoneCreateTextController
+                                                                        .text) {
+                                                                  ScaffoldMessenger.of(
+                                                                          context)
+                                                                      .showSnackBar(
+                                                                    SnackBar(
+                                                                      content:
+                                                                          Text(
+                                                                        'Passwords don\'t match!',
+                                                                      ),
+                                                                    ),
+                                                                  );
+                                                                  return;
+                                                                }
 
-                                                              _navigate = () =>
-                                                                  context.goNamedAuth(
-                                                                      'HomePage',
-                                                                      context
-                                                                          .mounted);
+                                                                final user =
+                                                                    await authManager
+                                                                        .createAccountWithEmail(
+                                                                  context,
+                                                                  _model
+                                                                      .emailCreateTextController
+                                                                      .text,
+                                                                  _model
+                                                                      .phoneCreateTextController
+                                                                      .text,
+                                                                );
+                                                                if (user ==
+                                                                    null) {
+                                                                  return;
+                                                                }
+
+                                                                await UsersRecord
+                                                                    .collection
+                                                                    .doc(user
+                                                                        .uid)
+                                                                    .update(
+                                                                        createUsersRecordData(
+                                                                      email: _model
+                                                                          .emailCreateTextController
+                                                                          .text,
+                                                                      displayName: _model
+                                                                          .fullnameCreateTextController
+                                                                          .text,
+                                                                    ));
+
+                                                                _navigate = () =>
+                                                                    context.goNamedAuth(
+                                                                        'HomePageCopy',
+                                                                        context
+                                                                            .mounted);
+                                                              } else {
+                                                                await showDialog(
+                                                                  context:
+                                                                      context,
+                                                                  builder:
+                                                                      (alertDialogContext) {
+                                                                    return AlertDialog(
+                                                                      title: Text(
+                                                                          'Alert'),
+                                                                      content: Text(
+                                                                          'Something Wrong'),
+                                                                      actions: [
+                                                                        TextButton(
+                                                                          onPressed: () =>
+                                                                              Navigator.pop(alertDialogContext),
+                                                                          child:
+                                                                              Text('Ok'),
+                                                                        ),
+                                                                      ],
+                                                                    );
+                                                                  },
+                                                                );
+                                                              }
+                                                            } else {
+                                                              await showDialog(
+                                                                context:
+                                                                    context,
+                                                                builder:
+                                                                    (alertDialogContext) {
+                                                                  return AlertDialog(
+                                                                    title: Text(
+                                                                        'Confirm'),
+                                                                    content: Text(
+                                                                        'Please check Terms and agreement.'),
+                                                                    actions: [
+                                                                      TextButton(
+                                                                        onPressed:
+                                                                            () =>
+                                                                                Navigator.pop(alertDialogContext),
+                                                                        child: Text(
+                                                                            'Ok'),
+                                                                      ),
+                                                                    ],
+                                                                  );
+                                                                },
+                                                              );
                                                             }
 
                                                             _navigate();
+
+                                                            setState(() {});
                                                           },
                                                           text: 'Sign Up',
                                                           options:

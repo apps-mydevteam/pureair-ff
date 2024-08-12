@@ -35,6 +35,38 @@ class CheckTodayAttendanceCall {
   }
 }
 
+class CreateUserSupabaseCall {
+  static Future<ApiCallResponse> call({
+    String? email = '',
+    String? password = '',
+  }) async {
+    final ffApiRequestBody = '''
+{
+  "email": "${email}",
+  "password": "${password}"
+}''';
+    return ApiManager.instance.makeApiCall(
+      callName: 'Create User Supabase',
+      apiUrl: 'https://czcslianaeuhlibsxsob.supabase.co/auth/v1/signup',
+      callType: ApiCallType.POST,
+      headers: {
+        'apikey':
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN6Y3NsaWFuYWV1aGxpYnN4c29iIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NzgyMDM0OTEsImV4cCI6MTk5Mzc3OTQ5MX0.KDQrA3RgqcCYbjA0Sqk8g03lHf_TT6aKNZ2HHGMZp7A',
+        'Content-Type': 'application/json',
+      },
+      params: {},
+      body: ffApiRequestBody,
+      bodyType: BodyType.JSON,
+      returnBody: true,
+      encodeBodyUtf8: false,
+      decodeUtf8: false,
+      cache: false,
+      isStreamingApi: false,
+      alwaysAllowBody: false,
+    );
+  }
+}
+
 class ApiPagingParams {
   int nextPageNumber = 0;
   int numItems = 0;

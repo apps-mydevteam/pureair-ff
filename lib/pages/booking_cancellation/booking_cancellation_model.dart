@@ -12,7 +12,6 @@ class BookingCancellationModel
     extends FlutterFlowModel<BookingCancellationWidget> {
   ///  State fields for stateful widgets in this page.
 
-  final unfocusNode = FocusNode();
   // Model for PopUpCancel component.
   late PopUpCancelModel popUpCancelModel;
 
@@ -23,7 +22,6 @@ class BookingCancellationModel
 
   @override
   void dispose() {
-    unfocusNode.dispose();
     popUpCancelModel.dispose();
   }
 }

@@ -10,7 +10,12 @@ import 'booking_cancellation_model.dart';
 export 'booking_cancellation_model.dart';
 
 class BookingCancellationWidget extends StatefulWidget {
-  const BookingCancellationWidget({super.key});
+  const BookingCancellationWidget({
+    super.key,
+    required this.orderId,
+  });
+
+  final int? orderId;
 
   @override
   State<BookingCancellationWidget> createState() =>
@@ -40,9 +45,7 @@ class _BookingCancellationWidgetState extends State<BookingCancellationWidget> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => _model.unfocusNode.canRequestFocus
-          ? FocusScope.of(context).requestFocus(_model.unfocusNode)
-          : FocusScope.of(context).unfocus(),
+      onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
@@ -51,7 +54,9 @@ class _BookingCancellationWidgetState extends State<BookingCancellationWidget> {
           child: wrapWithModel(
             model: _model.popUpCancelModel,
             updateCallback: () => setState(() {}),
-            child: PopUpCancelWidget(),
+            child: PopUpCancelWidget(
+              orderId: widget!.orderId!,
+            ),
           ),
         ),
       ),
