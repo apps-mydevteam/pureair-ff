@@ -29,7 +29,7 @@ class _NoupcomingbookingsWidgetState extends State<NoupcomingbookingsWidget> {
     super.initState();
     _model = createModel(context, () => NoupcomingbookingsModel());
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override

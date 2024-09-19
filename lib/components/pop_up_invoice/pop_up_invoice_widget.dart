@@ -35,7 +35,7 @@ class _PopUpInvoiceWidgetState extends State<PopUpInvoiceWidget> {
     super.initState();
     _model = createModel(context, () => PopUpInvoiceModel());
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override
@@ -779,6 +779,7 @@ class _PopUpInvoiceWidgetState extends State<PopUpInvoiceWidget> {
                                           fontFamily: 'Montserrat',
                                           color: FlutterFlowTheme.of(context)
                                               .primaryText,
+                                          fontSize: 14.0,
                                           letterSpacing: 0.0,
                                           fontWeight: FontWeight.w600,
                                         ),
@@ -793,6 +794,7 @@ class _PopUpInvoiceWidgetState extends State<PopUpInvoiceWidget> {
                                         fontFamily: 'Montserrat',
                                         color: FlutterFlowTheme.of(context)
                                             .primaryText,
+                                        fontSize: 14.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w500,
                                       ),
@@ -817,6 +819,7 @@ class _PopUpInvoiceWidgetState extends State<PopUpInvoiceWidget> {
                                           fontFamily: 'Montserrat',
                                           color: FlutterFlowTheme.of(context)
                                               .primaryText,
+                                          fontSize: 14.0,
                                           letterSpacing: 0.0,
                                           fontWeight: FontWeight.w600,
                                         ),
@@ -839,6 +842,7 @@ class _PopUpInvoiceWidgetState extends State<PopUpInvoiceWidget> {
                                         fontFamily: 'Montserrat',
                                         color: FlutterFlowTheme.of(context)
                                             .primaryText,
+                                        fontSize: 14.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w500,
                                       ),
@@ -863,6 +867,7 @@ class _PopUpInvoiceWidgetState extends State<PopUpInvoiceWidget> {
                                           fontFamily: 'Montserrat',
                                           color: FlutterFlowTheme.of(context)
                                               .primaryText,
+                                          fontSize: 14.0,
                                           letterSpacing: 0.0,
                                           fontWeight: FontWeight.w600,
                                         ),
@@ -877,6 +882,7 @@ class _PopUpInvoiceWidgetState extends State<PopUpInvoiceWidget> {
                                         fontFamily: 'Montserrat',
                                         color: FlutterFlowTheme.of(context)
                                             .primaryText,
+                                        fontSize: 14.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w500,
                                       ),
@@ -901,6 +907,7 @@ class _PopUpInvoiceWidgetState extends State<PopUpInvoiceWidget> {
                                           fontFamily: 'Montserrat',
                                           color: FlutterFlowTheme.of(context)
                                               .primaryText,
+                                          fontSize: 14.0,
                                           letterSpacing: 0.0,
                                           fontWeight: FontWeight.w600,
                                         ),
@@ -915,6 +922,7 @@ class _PopUpInvoiceWidgetState extends State<PopUpInvoiceWidget> {
                                         fontFamily: 'Montserrat',
                                         color: FlutterFlowTheme.of(context)
                                             .primaryText,
+                                        fontSize: 14.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w500,
                                       ),

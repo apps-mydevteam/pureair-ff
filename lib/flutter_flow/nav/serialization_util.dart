@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:from_css_color/from_css_color.dart';
 
 import '/backend/backend.dart';
+import '/backend/schema/structs/index.dart';
 
 import '/backend/supabase/supabase.dart';
 
@@ -91,6 +92,9 @@ String? serializeParam(
       case ParamType.Document:
         final reference = (param as FirestoreRecord).reference;
         data = _serializeDocumentReference(reference);
+
+      case ParamType.DataStruct:
+        data = param is BaseStruct ? param.serialize() : null;
 
       case ParamType.SupabaseRow:
         return json.encode((param as SupabaseDataRow).data);
@@ -185,6 +189,7 @@ enum ParamType {
 
   Document,
   DocumentReference,
+  DataStruct,
   SupabaseRow,
 }
 
@@ -193,6 +198,7 @@ dynamic deserializeParam<T>(
   ParamType paramType,
   bool isList, {
   List<String>? collectionNamePath,
+  StructBuilder<T>? structBuilder,
 }) {
   try {
     if (param == null) {
@@ -206,8 +212,13 @@ dynamic deserializeParam<T>(
       return paramValues
           .where((p) => p is String)
           .map((p) => p as String)
-          .map((p) => deserializeParam<T>(p, paramType, false,
-              collectionNamePath: collectionNamePath))
+          .map((p) => deserializeParam<T>(
+                p,
+                paramType,
+                false,
+                collectionNamePath: collectionNamePath,
+                structBuilder: structBuilder,
+              ))
           .where((p) => p != null)
           .map((p) => p! as T)
           .toList();
@@ -276,6 +287,8 @@ dynamic deserializeParam<T>(
             return PromosRow(data);
           case RegionsRow:
             return RegionsRow(data);
+          case CustomersBackupRow:
+            return CustomersBackupRow(data);
           case ServicesRow:
             return ServicesRow(data);
           case ServicecontractsRow:
@@ -309,6 +322,10 @@ dynamic deserializeParam<T>(
           default:
             return null;
         }
+
+      case ParamType.DataStruct:
+        final data = json.decode(param) as Map<String, dynamic>? ?? {};
+        return structBuilder != null ? structBuilder(data) : null;
 
       default:
         return null;

@@ -106,4 +106,8 @@ class OrdersRow extends SupabaseDataRow {
 
   double? get gstAmount => getField<double>('gst_amount');
   set gstAmount(double? value) => setField<double>('gst_amount', value);
+
+  DateTime? get scheduledDate => getField<DateTime>('scheduled_date');
+  set scheduledDate(DateTime? value) =>
+      setField<DateTime>('scheduled_date', value);
 }

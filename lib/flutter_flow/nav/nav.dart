@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import '/backend/backend.dart';
+import '/backend/schema/structs/index.dart';
 
 import '/backend/supabase/supabase.dart';
 
@@ -82,14 +83,13 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
       debugLogDiagnostics: true,
       refreshListenable: appStateNotifier,
       errorBuilder: (context, state) =>
-          appStateNotifier.loggedIn ? HomePageCopyWidget() : AuthPageWidget(),
+          appStateNotifier.loggedIn ? HomePageWidget() : AuthPageWidget(),
       routes: [
         FFRoute(
           name: '_initialize',
           path: '/',
-          builder: (context, _) => appStateNotifier.loggedIn
-              ? HomePageCopyWidget()
-              : AuthPageWidget(),
+          builder: (context, _) =>
+              appStateNotifier.loggedIn ? HomePageWidget() : AuthPageWidget(),
         ),
         FFRoute(
           name: 'AuthPage',
@@ -135,35 +135,13 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
               'customeraddressId',
               ParamType.int,
             ),
-          ),
-        ),
-        FFRoute(
-          name: 'Booking2-2',
-          path: '/booking22',
-          builder: (context, params) => Booking22Widget(
-            devmode: params.getParam(
-              'devmode',
+            useContract: params.getParam(
+              'useContract',
               ParamType.bool,
             ),
-          ),
-        ),
-        FFRoute(
-          name: 'Booking2-3',
-          path: '/booking23',
-          builder: (context, params) => Booking23Widget(
-            devmode: params.getParam(
-              'devmode',
-              ParamType.bool,
-            ),
-          ),
-        ),
-        FFRoute(
-          name: 'Booking2-4',
-          path: '/booking24',
-          builder: (context, params) => Booking24Widget(
-            devmode: params.getParam(
-              'devmode',
-              ParamType.bool,
+            contractId: params.getParam(
+              'contractId',
+              ParamType.int,
             ),
           ),
         ),
@@ -171,26 +149,6 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           name: 'Booking2-5',
           path: '/booking25',
           builder: (context, params) => Booking25Widget(
-            devmode: params.getParam(
-              'devmode',
-              ParamType.bool,
-            ),
-          ),
-        ),
-        FFRoute(
-          name: 'HomePage',
-          path: '/homePage',
-          builder: (context, params) => HomePageWidget(
-            devmode: params.getParam(
-              'devmode',
-              ParamType.bool,
-            ),
-          ),
-        ),
-        FFRoute(
-          name: 'Profiles',
-          path: '/profiles',
-          builder: (context, params) => ProfilesWidget(
             devmode: params.getParam(
               'devmode',
               ParamType.bool,
@@ -238,9 +196,9 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           ),
         ),
         FFRoute(
-          name: 'ProfilesCopy',
-          path: '/profilesCopy',
-          builder: (context, params) => ProfilesCopyWidget(
+          name: 'Profile',
+          path: '/profile',
+          builder: (context, params) => ProfileWidget(
             devmode: params.getParam(
               'devmode',
               ParamType.bool,
@@ -248,9 +206,9 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           ),
         ),
         FFRoute(
-          name: 'HomePageCopy',
-          path: '/homePageCopy',
-          builder: (context, params) => HomePageCopyWidget(
+          name: 'HomePage',
+          path: '/homePage',
+          builder: (context, params) => HomePageWidget(
             devmode: params.getParam(
               'devmode',
               ParamType.bool,
@@ -261,6 +219,62 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           name: 'ContractDetails',
           path: '/contractDetails',
           builder: (context, params) => ContractDetailsWidget(),
+        ),
+        FFRoute(
+          name: 'BookingForm3',
+          path: '/bookingForm3',
+          builder: (context, params) => BookingForm3Widget(
+            devmode: params.getParam(
+              'devmode',
+              ParamType.bool,
+            ),
+            needLeader: params.getParam(
+              'needLeader',
+              ParamType.bool,
+            ),
+            customeraddressId: params.getParam(
+              'customeraddressId',
+              ParamType.int,
+            ),
+            useContract: params.getParam(
+              'useContract',
+              ParamType.bool,
+            ),
+            contractId: params.getParam(
+              'contractId',
+              ParamType.int,
+            ),
+          ),
+        ),
+        FFRoute(
+          name: 'BookingForm4',
+          path: '/bookingForm4',
+          builder: (context, params) => BookingForm4Widget(
+            devmode: params.getParam(
+              'devmode',
+              ParamType.bool,
+            ),
+            needLeader: params.getParam(
+              'needLeader',
+              ParamType.bool,
+            ),
+            customeraddressId: params.getParam(
+              'customeraddressId',
+              ParamType.int,
+            ),
+            scheduledtime: params.getParam(
+              'scheduledtime',
+              ParamType.DateTime,
+            ),
+            useContract: params.getParam(
+              'useContract',
+              ParamType.bool,
+            ),
+            contractId: params.getParam(
+              'contractId',
+              ParamType.int,
+            ),
+          ),
         )
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
     );
@@ -380,6 +394,7 @@ class FFParameters {
     ParamType type, {
     bool isList = false,
     List<String>? collectionNamePath,
+    StructBuilder<T>? structBuilder,
   }) {
     if (futureParamValues.containsKey(paramName)) {
       return futureParamValues[paramName];
@@ -398,6 +413,7 @@ class FFParameters {
       type,
       isList,
       collectionNamePath: collectionNamePath,
+      structBuilder: structBuilder,
     );
   }
 }

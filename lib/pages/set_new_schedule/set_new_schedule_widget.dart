@@ -1,3 +1,4 @@
+import '/auth/firebase_auth/auth_util.dart';
 import '/components/pop_up_set_new_schedule/pop_up_set_new_schedule_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -31,7 +32,7 @@ class _SetNewScheduleWidgetState extends State<SetNewScheduleWidget> {
     super.initState();
     _model = createModel(context, () => SetNewScheduleModel());
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override
@@ -52,8 +53,11 @@ class _SetNewScheduleWidgetState extends State<SetNewScheduleWidget> {
           top: true,
           child: wrapWithModel(
             model: _model.popUpSetNewScheduleModel,
-            updateCallback: () => setState(() {}),
-            child: PopUpSetNewScheduleWidget(),
+            updateCallback: () => safeSetState(() {}),
+            child: PopUpSetNewScheduleWidget(
+              profileId: currentUserUid,
+              orderId: widget!.orderId!,
+            ),
           ),
         ),
       ),

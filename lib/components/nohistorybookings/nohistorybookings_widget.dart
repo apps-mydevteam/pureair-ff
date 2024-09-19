@@ -29,7 +29,7 @@ class _NohistorybookingsWidgetState extends State<NohistorybookingsWidget> {
     super.initState();
     _model = createModel(context, () => NohistorybookingsModel());
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override

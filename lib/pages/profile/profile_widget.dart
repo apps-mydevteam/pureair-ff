@@ -1,7 +1,9 @@
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/supabase/supabase.dart';
 import '/components/drawer_main_menus/drawer_main_menus_widget.dart';
+import '/components/pop_up_delete_address/pop_up_delete_address_widget.dart';
 import '/components/pop_up_new_address/pop_up_new_address_widget.dart';
+import '/components/popup_discard_addres/popup_discard_addres_widget.dart';
 import '/flutter_flow/flutter_flow_animations.dart';
 import '/flutter_flow/flutter_flow_button_tabbar.dart';
 import '/flutter_flow/flutter_flow_drop_down.dart';
@@ -10,6 +12,7 @@ import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/form_field_controller.dart';
 import 'dart:math';
+import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -17,11 +20,11 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'profiles_copy_model.dart';
-export 'profiles_copy_model.dart';
+import 'profile_model.dart';
+export 'profile_model.dart';
 
-class ProfilesCopyWidget extends StatefulWidget {
-  const ProfilesCopyWidget({
+class ProfileWidget extends StatefulWidget {
+  const ProfileWidget({
     super.key,
     bool? devmode,
   }) : this.devmode = devmode ?? false;
@@ -29,12 +32,12 @@ class ProfilesCopyWidget extends StatefulWidget {
   final bool devmode;
 
   @override
-  State<ProfilesCopyWidget> createState() => _ProfilesCopyWidgetState();
+  State<ProfileWidget> createState() => _ProfileWidgetState();
 }
 
-class _ProfilesCopyWidgetState extends State<ProfilesCopyWidget>
+class _ProfileWidgetState extends State<ProfileWidget>
     with TickerProviderStateMixin {
-  late ProfilesCopyModel _model;
+  late ProfileModel _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -43,13 +46,13 @@ class _ProfilesCopyWidgetState extends State<ProfilesCopyWidget>
   @override
   void initState() {
     super.initState();
-    _model = createModel(context, () => ProfilesCopyModel());
+    _model = createModel(context, () => ProfileModel());
 
     _model.tabBarController = TabController(
       vsync: this,
       length: 2,
       initialIndex: 0,
-    )..addListener(() => setState(() {}));
+    )..addListener(() => safeSetState(() {}));
 
     _model.fullnameTextFocusNode ??= FocusNode();
 
@@ -76,13 +79,36 @@ class _ProfilesCopyWidgetState extends State<ProfilesCopyWidget>
     _model.emailTextFocusNode ??= FocusNode();
 
     _model.addresstextFocusNode ??= FocusNode();
+    _model.addresstextFocusNode!.addListener(
+      () async {
+        _model.edited = true;
+        safeSetState(() {});
+      },
+    );
 
     _model.postalcodetextFocusNode ??= FocusNode();
+    _model.postalcodetextFocusNode!.addListener(
+      () async {
+        _model.edited = true;
+        safeSetState(() {});
+      },
+    );
 
     _model.floortextFocusNode ??= FocusNode();
+    _model.floortextFocusNode!.addListener(
+      () async {
+        _model.edited = true;
+        safeSetState(() {});
+      },
+    );
 
     _model.unitnumbertextFocusNode ??= FocusNode();
-
+    _model.unitnumbertextFocusNode!.addListener(
+      () async {
+        _model.edited = true;
+        safeSetState(() {});
+      },
+    );
     animationsMap.addAll({
       'tabBarOnPageLoadAnimation': AnimationInfo(
         trigger: AnimationTrigger.onPageLoad,
@@ -112,7 +138,7 @@ class _ProfilesCopyWidgetState extends State<ProfilesCopyWidget>
       this,
     );
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override
@@ -148,10 +174,10 @@ class _ProfilesCopyWidgetState extends State<ProfilesCopyWidget>
             ),
           );
         }
-        List<CustomersRow> profilesCopyCustomersRowList = snapshot.data!;
+        List<CustomersRow> profileCustomersRowList = snapshot.data!;
 
-        final profilesCopyCustomersRow = profilesCopyCustomersRowList.isNotEmpty
-            ? profilesCopyCustomersRowList.first
+        final profileCustomersRow = profileCustomersRowList.isNotEmpty
+            ? profileCustomersRowList.first
             : null;
 
         return GestureDetector(
@@ -163,7 +189,7 @@ class _ProfilesCopyWidgetState extends State<ProfilesCopyWidget>
               elevation: 16.0,
               child: wrapWithModel(
                 model: _model.drawerMainMenusModel,
-                updateCallback: () => setState(() {}),
+                updateCallback: () => safeSetState(() {}),
                 child: DrawerMainMenusWidget(),
               ),
             ),
@@ -190,7 +216,7 @@ class _ProfilesCopyWidgetState extends State<ProfilesCopyWidget>
                 hoverColor: Colors.transparent,
                 highlightColor: Colors.transparent,
                 onTap: () async {
-                  context.pushNamed('HomePageCopy');
+                  context.pushNamed('HomePage');
                 },
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8.0),
@@ -266,7 +292,7 @@ class _ProfilesCopyWidgetState extends State<ProfilesCopyWidget>
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  'Hello, ${profilesCopyCustomersRow?.name}',
+                                  'Hello, ${profileCustomersRow?.name}',
                                   style: FlutterFlowTheme.of(context)
                                       .headlineSmall
                                       .override(
@@ -277,7 +303,7 @@ class _ProfilesCopyWidgetState extends State<ProfilesCopyWidget>
                                 ),
                                 FFButtonWidget(
                                   onPressed: () async {
-                                    context.pushNamed('HomePageCopy');
+                                    context.pushNamed('HomePage');
                                   },
                                   text: 'Book Now',
                                   options: FFButtonOptions(
@@ -455,9 +481,8 @@ class _ProfilesCopyWidgetState extends State<ProfilesCopyWidget>
                                                     controller: _model
                                                             .fullnameTextTextController ??=
                                                         TextEditingController(
-                                                      text:
-                                                          profilesCopyCustomersRow
-                                                              ?.name,
+                                                      text: profileCustomersRow
+                                                          ?.name,
                                                     ),
                                                     focusNode: _model
                                                         .fullnameTextFocusNode,
@@ -470,6 +495,7 @@ class _ProfilesCopyWidgetState extends State<ProfilesCopyWidget>
                                                               .override(
                                                                 fontFamily:
                                                                     'Montserrat',
+                                                                fontSize: 14.0,
                                                                 letterSpacing:
                                                                     0.0,
                                                               ),
@@ -624,7 +650,7 @@ class _ProfilesCopyWidgetState extends State<ProfilesCopyWidget>
                                                                   .phoneTextTextController ??=
                                                               TextEditingController(
                                                             text:
-                                                                profilesCopyCustomersRow
+                                                                profileCustomersRow
                                                                     ?.phone,
                                                           ),
                                                           focusNode: _model
@@ -639,6 +665,8 @@ class _ProfilesCopyWidgetState extends State<ProfilesCopyWidget>
                                                                     .override(
                                                                       fontFamily:
                                                                           'Montserrat',
+                                                                      fontSize:
+                                                                          14.0,
                                                                       letterSpacing:
                                                                           0.0,
                                                                     ),
@@ -761,7 +789,7 @@ class _ProfilesCopyWidgetState extends State<ProfilesCopyWidget>
                                                                     () async {
                                                                   _model.sendOTP =
                                                                       true;
-                                                                  setState(
+                                                                  safeSetState(
                                                                       () {});
                                                                   ScaffoldMessenger.of(
                                                                           context)
@@ -1482,9 +1510,8 @@ class _ProfilesCopyWidgetState extends State<ProfilesCopyWidget>
                                                     controller: _model
                                                             .emailTextTextController ??=
                                                         TextEditingController(
-                                                      text:
-                                                          profilesCopyCustomersRow
-                                                              ?.email,
+                                                      text: profileCustomersRow
+                                                          ?.email,
                                                     ),
                                                     focusNode: _model
                                                         .emailTextFocusNode,
@@ -1497,6 +1524,7 @@ class _ProfilesCopyWidgetState extends State<ProfilesCopyWidget>
                                                               .override(
                                                                 fontFamily:
                                                                     'Montserrat',
+                                                                fontSize: 14.0,
                                                                 letterSpacing:
                                                                     0.0,
                                                               ),
@@ -1510,7 +1538,7 @@ class _ProfilesCopyWidgetState extends State<ProfilesCopyWidget>
                                                               .override(
                                                                 fontFamily:
                                                                     'Montserrat',
-                                                                fontSize: 10.0,
+                                                                fontSize: 14.0,
                                                                 letterSpacing:
                                                                     0.0,
                                                                 fontWeight:
@@ -1676,7 +1704,7 @@ class _ProfilesCopyWidgetState extends State<ProfilesCopyWidget>
                                                                   (rows) =>
                                                                       rows.eq(
                                                                 'firebase_uid',
-                                                                profilesCopyCustomersRow
+                                                                profileCustomersRow
                                                                     ?.firebaseUid,
                                                               ),
                                                             );
@@ -1704,7 +1732,7 @@ class _ProfilesCopyWidgetState extends State<ProfilesCopyWidget>
                                                             );
 
                                                             context.goNamed(
-                                                                'HomePage');
+                                                                'Profile');
                                                           },
                                                           text: 'Save Changes',
                                                           options:
@@ -1846,11 +1874,16 @@ class _ProfilesCopyWidgetState extends State<ProfilesCopyWidget>
                                                   future:
                                                       CustomeraddressesTable()
                                                           .queryRows(
-                                                    queryFn: (q) => q.eq(
-                                                      'customer_id',
-                                                      profilesCopyCustomersRow
-                                                          ?.id,
-                                                    ),
+                                                    queryFn: (q) => q
+                                                        .eq(
+                                                          'customer_id',
+                                                          profileCustomersRow
+                                                              ?.id,
+                                                        )
+                                                        .eq(
+                                                          'deleted',
+                                                          false,
+                                                        ),
                                                   ),
                                                   builder: (context, snapshot) {
                                                     // Customize what your widget looks like when it's loading.
@@ -1897,12 +1930,12 @@ class _ProfilesCopyWidgetState extends State<ProfilesCopyWidget>
                                                               .withoutNulls
                                                               .toList(),
                                                       onChanged: (val) async {
-                                                        setState(() => _model
+                                                        safeSetState(() => _model
                                                                 .selectDefaultAddressValue =
                                                             val);
                                                         _model.addressId = _model
                                                             .selectDefaultAddressValue;
-                                                        setState(() {});
+                                                        safeSetState(() {});
                                                       },
                                                       width: double.infinity,
                                                       height: 54.0,
@@ -1990,7 +2023,7 @@ class _ProfilesCopyWidgetState extends State<ProfilesCopyWidget>
                                                                 child:
                                                                     PopUpNewAddressWidget(
                                                                   customerid:
-                                                                      profilesCopyCustomersRow!
+                                                                      profileCustomersRow!
                                                                           .id,
                                                                 ),
                                                               ),
@@ -2194,6 +2227,20 @@ class _ProfilesCopyWidgetState extends State<ProfilesCopyWidget>
                                                                   ),
                                                                   focusNode: _model
                                                                       .addresstextFocusNode,
+                                                                  onChanged: (_) =>
+                                                                      EasyDebounce
+                                                                          .debounce(
+                                                                    '_model.addresstextTextController',
+                                                                    Duration(
+                                                                        milliseconds:
+                                                                            2000),
+                                                                    () async {
+                                                                      _model.edited =
+                                                                          true;
+                                                                      safeSetState(
+                                                                          () {});
+                                                                    },
+                                                                  ),
                                                                   obscureText:
                                                                       false,
                                                                   decoration:
@@ -2374,6 +2421,20 @@ class _ProfilesCopyWidgetState extends State<ProfilesCopyWidget>
                                                                   ),
                                                                   focusNode: _model
                                                                       .postalcodetextFocusNode,
+                                                                  onChanged: (_) =>
+                                                                      EasyDebounce
+                                                                          .debounce(
+                                                                    '_model.postalcodetextTextController',
+                                                                    Duration(
+                                                                        milliseconds:
+                                                                            2000),
+                                                                    () async {
+                                                                      _model.edited =
+                                                                          true;
+                                                                      safeSetState(
+                                                                          () {});
+                                                                    },
+                                                                  ),
                                                                   obscureText:
                                                                       false,
                                                                   decoration:
@@ -2600,6 +2661,18 @@ class _ProfilesCopyWidgetState extends State<ProfilesCopyWidget>
                                                                         ),
                                                                         focusNode:
                                                                             _model.floortextFocusNode,
+                                                                        onChanged:
+                                                                            (_) =>
+                                                                                EasyDebounce.debounce(
+                                                                          '_model.floortextTextController',
+                                                                          Duration(
+                                                                              milliseconds: 2000),
+                                                                          () async {
+                                                                            _model.edited =
+                                                                                true;
+                                                                            safeSetState(() {});
+                                                                          },
+                                                                        ),
                                                                         obscureText:
                                                                             false,
                                                                         decoration:
@@ -2619,7 +2692,7 @@ class _ProfilesCopyWidgetState extends State<ProfilesCopyWidget>
                                                                               .bodySmall
                                                                               .override(
                                                                                 fontFamily: 'Montserrat',
-                                                                                fontSize: 10.0,
+                                                                                fontSize: 14.0,
                                                                                 letterSpacing: 0.0,
                                                                                 fontWeight: FontWeight.w200,
                                                                               ),
@@ -2699,6 +2772,15 @@ class _ProfilesCopyWidgetState extends State<ProfilesCopyWidget>
                                                                           ),
                                                                           focusNode:
                                                                               _model.unitnumbertextFocusNode,
+                                                                          onChanged: (_) =>
+                                                                              EasyDebounce.debounce(
+                                                                            '_model.unitnumbertextTextController',
+                                                                            Duration(milliseconds: 2000),
+                                                                            () async {
+                                                                              _model.edited = true;
+                                                                              safeSetState(() {});
+                                                                            },
+                                                                          ),
                                                                           obscureText:
                                                                               false,
                                                                           decoration:
@@ -2714,7 +2796,7 @@ class _ProfilesCopyWidgetState extends State<ProfilesCopyWidget>
                                                                                 '111',
                                                                             hintStyle: FlutterFlowTheme.of(context).bodySmall.override(
                                                                                   fontFamily: 'Montserrat',
-                                                                                  fontSize: 10.0,
+                                                                                  fontSize: 14.0,
                                                                                   letterSpacing: 0.0,
                                                                                   fontWeight: FontWeight.w200,
                                                                                 ),
@@ -2791,245 +2873,371 @@ class _ProfilesCopyWidgetState extends State<ProfilesCopyWidget>
                                                   mainAxisAlignment:
                                                       MainAxisAlignment.start,
                                                   children: [
-                                                    Align(
-                                                      alignment:
-                                                          AlignmentDirectional(
-                                                              -1.0, 0.0),
-                                                      child: FFButtonWidget(
-                                                        onPressed: () async {
-                                                          context.pushNamed(
-                                                            'HomePage',
-                                                            queryParameters: {
-                                                              'devmode':
-                                                                  serializeParam(
-                                                                false,
-                                                                ParamType.bool,
-                                                              ),
-                                                            }.withoutNulls,
-                                                            extra: <String,
-                                                                dynamic>{
-                                                              kTransitionInfoKey:
-                                                                  TransitionInfo(
-                                                                hasTransition:
-                                                                    true,
-                                                                transitionType:
-                                                                    PageTransitionType
-                                                                        .leftToRight,
-                                                              ),
+                                                    if ((_model.edited ==
+                                                            true) &&
+                                                        (_model.addressId !=
+                                                            null))
+                                                      Align(
+                                                        alignment:
+                                                            AlignmentDirectional(
+                                                                -1.0, 0.0),
+                                                        child: Builder(
+                                                          builder: (context) =>
+                                                              FFButtonWidget(
+                                                            onPressed:
+                                                                () async {
+                                                              await showDialog(
+                                                                context:
+                                                                    context,
+                                                                builder:
+                                                                    (dialogContext) {
+                                                                  return Dialog(
+                                                                    elevation:
+                                                                        0,
+                                                                    insetPadding:
+                                                                        EdgeInsets
+                                                                            .zero,
+                                                                    backgroundColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    alignment: AlignmentDirectional(
+                                                                            0.0,
+                                                                            0.0)
+                                                                        .resolve(
+                                                                            Directionality.of(context)),
+                                                                    child:
+                                                                        GestureDetector(
+                                                                      onTap: () =>
+                                                                          FocusScope.of(dialogContext)
+                                                                              .unfocus(),
+                                                                      child:
+                                                                          PopupDiscardAddresWidget(
+                                                                        customeraddressId:
+                                                                            _model.addressId,
+                                                                      ),
+                                                                    ),
+                                                                  );
+                                                                },
+                                                              );
                                                             },
-                                                          );
-                                                        },
-                                                        text: 'Delete Address',
-                                                        options:
-                                                            FFButtonOptions(
-                                                          height: 36.0,
-                                                          padding:
-                                                              EdgeInsetsDirectional
-                                                                  .fromSTEB(
-                                                                      24.0,
-                                                                      0.0,
-                                                                      24.0,
-                                                                      0.0),
-                                                          iconPadding:
-                                                              EdgeInsetsDirectional
-                                                                  .fromSTEB(
-                                                                      0.0,
-                                                                      0.0,
-                                                                      0.0,
-                                                                      0.0),
-                                                          color: FlutterFlowTheme
-                                                                  .of(context)
-                                                              .info,
-                                                          textStyle:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .titleSmall
-                                                                  .override(
-                                                                    fontFamily:
-                                                                        'Montserrat',
-                                                                    color: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .primaryText,
-                                                                    fontSize:
-                                                                        14.0,
-                                                                    letterSpacing:
+                                                            text: 'Cancel',
+                                                            options:
+                                                                FFButtonOptions(
+                                                              height: 36.0,
+                                                              padding:
+                                                                  EdgeInsetsDirectional
+                                                                      .fromSTEB(
+                                                                          24.0,
+                                                                          0.0,
+                                                                          24.0,
+                                                                          0.0),
+                                                              iconPadding:
+                                                                  EdgeInsetsDirectional
+                                                                      .fromSTEB(
+                                                                          0.0,
+                                                                          0.0,
+                                                                          0.0,
+                                                                          0.0),
+                                                              color: FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .info,
+                                                              textStyle:
+                                                                  FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .titleSmall
+                                                                      .override(
+                                                                        fontFamily:
+                                                                            'Montserrat',
+                                                                        color: FlutterFlowTheme.of(context)
+                                                                            .primaryText,
+                                                                        fontSize:
+                                                                            14.0,
+                                                                        letterSpacing:
+                                                                            0.0,
+                                                                      ),
+                                                              elevation: 3.0,
+                                                              borderSide:
+                                                                  BorderSide(
+                                                                color: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .primaryText,
+                                                                width: 1.0,
+                                                              ),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          5.0),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    if ((_model.edited !=
+                                                            true) &&
+                                                        (_model.addressId !=
+                                                            null))
+                                                      Align(
+                                                        alignment:
+                                                            AlignmentDirectional(
+                                                                -1.0, 0.0),
+                                                        child: Builder(
+                                                          builder: (context) =>
+                                                              Padding(
+                                                            padding:
+                                                                EdgeInsetsDirectional
+                                                                    .fromSTEB(
+                                                                        8.0,
                                                                         0.0,
+                                                                        0.0,
+                                                                        0.0),
+                                                            child:
+                                                                FFButtonWidget(
+                                                              onPressed:
+                                                                  () async {
+                                                                await showDialog(
+                                                                  context:
+                                                                      context,
+                                                                  builder:
+                                                                      (dialogContext) {
+                                                                    return Dialog(
+                                                                      elevation:
+                                                                          0,
+                                                                      insetPadding:
+                                                                          EdgeInsets
+                                                                              .zero,
+                                                                      backgroundColor:
+                                                                          Colors
+                                                                              .transparent,
+                                                                      alignment: AlignmentDirectional(
+                                                                              0.0,
+                                                                              0.0)
+                                                                          .resolve(
+                                                                              Directionality.of(context)),
+                                                                      child:
+                                                                          GestureDetector(
+                                                                        onTap: () =>
+                                                                            FocusScope.of(dialogContext).unfocus(),
+                                                                        child:
+                                                                            PopUpDeleteAddressWidget(
+                                                                          customeraddressId:
+                                                                              _model.addressId!,
+                                                                        ),
+                                                                      ),
+                                                                    );
+                                                                  },
+                                                                );
+                                                              },
+                                                              text:
+                                                                  'Delete Address',
+                                                              options:
+                                                                  FFButtonOptions(
+                                                                height: 36.0,
+                                                                padding: EdgeInsetsDirectional
+                                                                    .fromSTEB(
+                                                                        24.0,
+                                                                        0.0,
+                                                                        24.0,
+                                                                        0.0),
+                                                                iconPadding:
+                                                                    EdgeInsetsDirectional
+                                                                        .fromSTEB(
+                                                                            0.0,
+                                                                            0.0,
+                                                                            0.0,
+                                                                            0.0),
+                                                                color: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .info,
+                                                                textStyle: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .titleSmall
+                                                                    .override(
+                                                                      fontFamily:
+                                                                          'Montserrat',
+                                                                      color: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .primaryText,
+                                                                      fontSize:
+                                                                          14.0,
+                                                                      letterSpacing:
+                                                                          0.0,
+                                                                    ),
+                                                                elevation: 3.0,
+                                                                borderSide:
+                                                                    BorderSide(
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .primaryText,
+                                                                  width: 1.0,
+                                                                ),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            5.0),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    if (_model.addressId !=
+                                                        null)
+                                                      Padding(
+                                                        padding:
+                                                            EdgeInsetsDirectional
+                                                                .fromSTEB(
+                                                                    8.0,
+                                                                    0.0,
+                                                                    0.0,
+                                                                    0.0),
+                                                        child: FFButtonWidget(
+                                                          onPressed: () async {
+                                                            if (_model.formKey
+                                                                        .currentState ==
+                                                                    null ||
+                                                                !_model.formKey
+                                                                    .currentState!
+                                                                    .validate()) {
+                                                              return;
+                                                            }
+                                                            var confirmDialogResponse =
+                                                                await showDialog<
+                                                                        bool>(
+                                                                      context:
+                                                                          context,
+                                                                      builder:
+                                                                          (alertDialogContext) {
+                                                                        return AlertDialog(
+                                                                          title:
+                                                                              Text('Confirm Address'),
+                                                                          content:
+                                                                              Text('Are you sure to update this address?'),
+                                                                          actions: [
+                                                                            TextButton(
+                                                                              onPressed: () => Navigator.pop(alertDialogContext, false),
+                                                                              child: Text('Cancel'),
+                                                                            ),
+                                                                            TextButton(
+                                                                              onPressed: () => Navigator.pop(alertDialogContext, true),
+                                                                              child: Text('Confirm'),
+                                                                            ),
+                                                                          ],
+                                                                        );
+                                                                      },
+                                                                    ) ??
+                                                                    false;
+                                                            if (confirmDialogResponse) {
+                                                              await CustomeraddressesTable()
+                                                                  .update(
+                                                                data: {
+                                                                  'name': _model
+                                                                      .addresstextTextController
+                                                                      .text,
+                                                                  'postcode': _model
+                                                                      .postalcodetextTextController
+                                                                      .text,
+                                                                  'unit_level':
+                                                                      _model
+                                                                          .floortextTextController
+                                                                          .text,
+                                                                  'unit_number':
+                                                                      _model
+                                                                          .unitnumbertextTextController
+                                                                          .text,
+                                                                },
+                                                                matchingRows:
+                                                                    (rows) =>
+                                                                        rows.eq(
+                                                                  'id',
+                                                                  _model
+                                                                      .addressId,
+                                                                ),
+                                                              );
+                                                              ScaffoldMessenger
+                                                                      .of(context)
+                                                                  .showSnackBar(
+                                                                SnackBar(
+                                                                  content: Text(
+                                                                    'Success Update Address',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .primaryText,
+                                                                    ),
                                                                   ),
-                                                          elevation: 3.0,
-                                                          borderSide:
-                                                              BorderSide(
+                                                                  duration: Duration(
+                                                                      milliseconds:
+                                                                          4000),
+                                                                  backgroundColor:
+                                                                      FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .secondary,
+                                                                ),
+                                                              );
+
+                                                              context.goNamed(
+                                                                'Profile',
+                                                                queryParameters:
+                                                                    {
+                                                                  'devmode':
+                                                                      serializeParam(
+                                                                    false,
+                                                                    ParamType
+                                                                        .bool,
+                                                                  ),
+                                                                }.withoutNulls,
+                                                              );
+                                                            }
+                                                          },
+                                                          text: 'Save Changes',
+                                                          options:
+                                                              FFButtonOptions(
+                                                            height: 36.0,
+                                                            padding:
+                                                                EdgeInsetsDirectional
+                                                                    .fromSTEB(
+                                                                        24.0,
+                                                                        0.0,
+                                                                        24.0,
+                                                                        0.0),
+                                                            iconPadding:
+                                                                EdgeInsetsDirectional
+                                                                    .fromSTEB(
+                                                                        0.0,
+                                                                        0.0,
+                                                                        0.0,
+                                                                        0.0),
                                                             color: FlutterFlowTheme
                                                                     .of(context)
-                                                                .primaryText,
-                                                            width: 1.0,
+                                                                .primary,
+                                                            textStyle:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMedium
+                                                                    .override(
+                                                                      fontFamily:
+                                                                          'Montserrat',
+                                                                      color: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .info,
+                                                                      fontSize:
+                                                                          14.0,
+                                                                      letterSpacing:
+                                                                          0.0,
+                                                                    ),
+                                                            elevation: 3.0,
+                                                            borderSide:
+                                                                BorderSide(
+                                                              color: Colors
+                                                                  .transparent,
+                                                              width: 1.0,
+                                                            ),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        5.0),
                                                           ),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      5.0),
                                                         ),
                                                       ),
-                                                    ),
-                                                    Padding(
-                                                      padding:
-                                                          EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                                  8.0,
-                                                                  0.0,
-                                                                  0.0,
-                                                                  0.0),
-                                                      child: FFButtonWidget(
-                                                        onPressed: () async {
-                                                          if (_model.formKey
-                                                                      .currentState ==
-                                                                  null ||
-                                                              !_model.formKey
-                                                                  .currentState!
-                                                                  .validate()) {
-                                                            return;
-                                                          }
-                                                          var confirmDialogResponse =
-                                                              await showDialog<
-                                                                      bool>(
-                                                                    context:
-                                                                        context,
-                                                                    builder:
-                                                                        (alertDialogContext) {
-                                                                      return AlertDialog(
-                                                                        title: Text(
-                                                                            'Confirm Address'),
-                                                                        content:
-                                                                            Text('Are you sure to update this address?'),
-                                                                        actions: [
-                                                                          TextButton(
-                                                                            onPressed: () =>
-                                                                                Navigator.pop(alertDialogContext, false),
-                                                                            child:
-                                                                                Text('Cancel'),
-                                                                          ),
-                                                                          TextButton(
-                                                                            onPressed: () =>
-                                                                                Navigator.pop(alertDialogContext, true),
-                                                                            child:
-                                                                                Text('Confirm'),
-                                                                          ),
-                                                                        ],
-                                                                      );
-                                                                    },
-                                                                  ) ??
-                                                                  false;
-                                                          if (confirmDialogResponse) {
-                                                            await CustomeraddressesTable()
-                                                                .update(
-                                                              data: {
-                                                                'name': _model
-                                                                    .addresstextTextController
-                                                                    .text,
-                                                                'postcode': _model
-                                                                    .postalcodetextTextController
-                                                                    .text,
-                                                                'unit_level': _model
-                                                                    .floortextTextController
-                                                                    .text,
-                                                                'unit_number':
-                                                                    _model
-                                                                        .unitnumbertextTextController
-                                                                        .text,
-                                                              },
-                                                              matchingRows:
-                                                                  (rows) =>
-                                                                      rows.eq(
-                                                                'id',
-                                                                _model
-                                                                    .addressId,
-                                                              ),
-                                                            );
-                                                            ScaffoldMessenger
-                                                                    .of(context)
-                                                                .showSnackBar(
-                                                              SnackBar(
-                                                                content: Text(
-                                                                  'Success Update Address',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    color: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .primaryText,
-                                                                  ),
-                                                                ),
-                                                                duration: Duration(
-                                                                    milliseconds:
-                                                                        4000),
-                                                                backgroundColor:
-                                                                    FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .secondary,
-                                                              ),
-                                                            );
-
-                                                            context.goNamed(
-                                                              'ProfilesCopy',
-                                                              queryParameters: {
-                                                                'devmode':
-                                                                    serializeParam(
-                                                                  false,
-                                                                  ParamType
-                                                                      .bool,
-                                                                ),
-                                                              }.withoutNulls,
-                                                            );
-                                                          }
-                                                        },
-                                                        text: 'Save Changes',
-                                                        options:
-                                                            FFButtonOptions(
-                                                          height: 36.0,
-                                                          padding:
-                                                              EdgeInsetsDirectional
-                                                                  .fromSTEB(
-                                                                      24.0,
-                                                                      0.0,
-                                                                      24.0,
-                                                                      0.0),
-                                                          iconPadding:
-                                                              EdgeInsetsDirectional
-                                                                  .fromSTEB(
-                                                                      0.0,
-                                                                      0.0,
-                                                                      0.0,
-                                                                      0.0),
-                                                          color: FlutterFlowTheme
-                                                                  .of(context)
-                                                              .primary,
-                                                          textStyle:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .bodyMedium
-                                                                  .override(
-                                                                    fontFamily:
-                                                                        'Montserrat',
-                                                                    color: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .info,
-                                                                    fontSize:
-                                                                        14.0,
-                                                                    letterSpacing:
-                                                                        0.0,
-                                                                  ),
-                                                          elevation: 3.0,
-                                                          borderSide:
-                                                              BorderSide(
-                                                            color: Colors
-                                                                .transparent,
-                                                            width: 1.0,
-                                                          ),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      5.0),
-                                                        ),
-                                                      ),
-                                                    ),
                                                   ],
                                                 ),
                                               ),

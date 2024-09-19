@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'flutter_flow/request_manager.dart';
 import '/backend/backend.dart';
+import '/backend/schema/structs/index.dart';
 import 'backend/api_requests/api_manager.dart';
 import 'backend/supabase/supabase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -44,6 +45,82 @@ class FFAppState extends ChangeNotifier {
   bool get isAdmin => _isAdmin;
   set isAdmin(bool value) {
     _isAdmin = value;
+  }
+
+  List<CartStruct> _cart = [];
+  List<CartStruct> get cart => _cart;
+  set cart(List<CartStruct> value) {
+    _cart = value;
+  }
+
+  void addToCart(CartStruct value) {
+    cart.add(value);
+  }
+
+  void removeFromCart(CartStruct value) {
+    cart.remove(value);
+  }
+
+  void removeAtIndexFromCart(int index) {
+    cart.removeAt(index);
+  }
+
+  void updateCartAtIndex(
+    int index,
+    CartStruct Function(CartStruct) updateFn,
+  ) {
+    cart[index] = updateFn(_cart[index]);
+  }
+
+  void insertAtIndexInCart(int index, CartStruct value) {
+    cart.insert(index, value);
+  }
+
+  double _totalCart = 0.0;
+  double get totalCart => _totalCart;
+  set totalCart(double value) {
+    _totalCart = value;
+  }
+
+  List<ContractItemStruct> _contractItems = [];
+  List<ContractItemStruct> get contractItems => _contractItems;
+  set contractItems(List<ContractItemStruct> value) {
+    _contractItems = value;
+  }
+
+  void addToContractItems(ContractItemStruct value) {
+    contractItems.add(value);
+  }
+
+  void removeFromContractItems(ContractItemStruct value) {
+    contractItems.remove(value);
+  }
+
+  void removeAtIndexFromContractItems(int index) {
+    contractItems.removeAt(index);
+  }
+
+  void updateContractItemsAtIndex(
+    int index,
+    ContractItemStruct Function(ContractItemStruct) updateFn,
+  ) {
+    contractItems[index] = updateFn(_contractItems[index]);
+  }
+
+  void insertAtIndexInContractItems(int index, ContractItemStruct value) {
+    contractItems.insert(index, value);
+  }
+
+  int _contractId = 0;
+  int get contractId => _contractId;
+  set contractId(int value) {
+    _contractId = value;
+  }
+
+  String _postalCode = '';
+  String get postalCode => _postalCode;
+  set postalCode(String value) {
+    _postalCode = value;
   }
 
   final _orderItemsManager = FutureRequestManager<List<OrderitemsRow>>();

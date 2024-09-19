@@ -95,17 +95,17 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:794070351747:android:3c564d5ea4944abcfdc0b6",
+        "mobilesdk_app_id": "1:794070351747:android:d449124d3fa2d7cdfdc0b6",
         "android_client_info": {
-          "package_name": "pureair.linkbot.sg"
+          "package_name": "pa.linkbot.sg"
         }
       },
       "oauth_client": [
         {
-          "client_id": "794070351747-u8l1vr50mtp3kv547lj33d146vuocpos.apps.googleusercontent.com",
+          "client_id": "794070351747-7groi7nn8s57njqj53ccsgmka7i9j19t.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "pureair.linkbot.sg",
+            "package_name": "pa.linkbot.sg",
             "certificate_hash": "9bbb3186b2189ef16d8f272bdab59362c395cbb4"
           }
         },

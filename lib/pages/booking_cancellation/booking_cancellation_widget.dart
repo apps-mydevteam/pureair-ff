@@ -32,7 +32,7 @@ class _BookingCancellationWidgetState extends State<BookingCancellationWidget> {
     super.initState();
     _model = createModel(context, () => BookingCancellationModel());
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override
@@ -53,7 +53,7 @@ class _BookingCancellationWidgetState extends State<BookingCancellationWidget> {
           top: true,
           child: wrapWithModel(
             model: _model.popUpCancelModel,
-            updateCallback: () => setState(() {}),
+            updateCallback: () => safeSetState(() {}),
             child: PopUpCancelWidget(
               orderId: widget!.orderId!,
             ),

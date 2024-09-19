@@ -1,12 +1,16 @@
 import '/auth/firebase_auth/auth_util.dart';
+import '/backend/schema/structs/index.dart';
 import '/backend/supabase/supabase.dart';
+import '/components/drawer_main_menus/drawer_main_menus_widget.dart';
+import '/components/services_item_field/services_item_field_widget.dart';
 import '/flutter_flow/flutter_flow_count_controller.dart';
-import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
+import '/custom_code/actions/index.dart' as actions;
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -20,12 +24,17 @@ class BookingForm2Widget extends StatefulWidget {
     bool? devmode,
     bool? needLeader,
     required this.customeraddressId,
+    bool? useContract,
+    this.contractId,
   })  : this.devmode = devmode ?? false,
-        this.needLeader = needLeader ?? false;
+        this.needLeader = needLeader ?? false,
+        this.useContract = useContract ?? false;
 
   final bool devmode;
   final bool needLeader;
   final int? customeraddressId;
+  final bool useContract;
+  final int? contractId;
 
   @override
   State<BookingForm2Widget> createState() => _BookingForm2WidgetState();
@@ -41,6 +50,12 @@ class _BookingForm2WidgetState extends State<BookingForm2Widget> {
     super.initState();
     _model = createModel(context, () => BookingForm2Model());
 
+    // On page load action.
+    SchedulerBinding.instance.addPostFrameCallback((_) async {
+      FFAppState().cart = [];
+      FFAppState().update(() {});
+    });
+
     _model.expandableExpandableController1 =
         ExpandableController(initialExpanded: false);
     _model.expandableExpandableController2 =
@@ -49,7 +64,7 @@ class _BookingForm2WidgetState extends State<BookingForm2Widget> {
         ExpandableController(initialExpanded: false);
     _model.expandableExpandableController4 =
         ExpandableController(initialExpanded: false);
-    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override
@@ -61,6 +76,8 @@ class _BookingForm2WidgetState extends State<BookingForm2Widget> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<FFAppState>();
+
     return FutureBuilder<List<CustomersRow>>(
       future: CustomersTable().querySingleRow(
         queryFn: (q) => q.eq(
@@ -98,287 +115,10 @@ class _BookingForm2WidgetState extends State<BookingForm2Widget> {
             backgroundColor: FlutterFlowTheme.of(context).info,
             drawer: Drawer(
               elevation: 16.0,
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Container(
-                    width: MediaQuery.sizeOf(context).width * 1.0,
-                    height: MediaQuery.sizeOf(context).height * 1.0,
-                    decoration: BoxDecoration(
-                      color: FlutterFlowTheme.of(context).secondaryBackground,
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
-                              16.0, 30.0, 30.0, 0.0),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Align(
-                                alignment: AlignmentDirectional(-1.0, 0.0),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  child: Image.asset(
-                                    'assets/images/website-2-300x300.png',
-                                    width: 60.0,
-                                    height: 60.0,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                              FlutterFlowIconButton(
-                                borderColor: Colors.transparent,
-                                borderRadius: 20.0,
-                                borderWidth: 1.0,
-                                buttonSize: 35.0,
-                                icon: Icon(
-                                  Icons.close,
-                                  color:
-                                      FlutterFlowTheme.of(context).primaryText,
-                                  size: 19.0,
-                                ),
-                                onPressed: () async {
-                                  Navigator.pop(context);
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                        InkWell(
-                          splashColor: Colors.transparent,
-                          focusColor: Colors.transparent,
-                          hoverColor: Colors.transparent,
-                          highlightColor: Colors.transparent,
-                          onTap: () async {
-                            context.pushNamed(
-                              'BookingForm1',
-                              queryParameters: {
-                                'devmode': serializeParam(
-                                  false,
-                                  ParamType.bool,
-                                ),
-                                'customerId': serializeParam(
-                                  '',
-                                  ParamType.String,
-                                ),
-                              }.withoutNulls,
-                            );
-                          },
-                          child: Container(
-                            width: MediaQuery.sizeOf(context).width * 1.0,
-                            height: 48.0,
-                            decoration: BoxDecoration(
-                              color: FlutterFlowTheme.of(context)
-                                  .secondaryBackground,
-                            ),
-                            child: Align(
-                              alignment: AlignmentDirectional(-1.0, 0.0),
-                              child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
-                                    16.0, 0.0, 0.0, 0.0),
-                                child: InkWell(
-                                  splashColor: Colors.transparent,
-                                  focusColor: Colors.transparent,
-                                  hoverColor: Colors.transparent,
-                                  highlightColor: Colors.transparent,
-                                  onTap: () async {
-                                    context.pushNamed(
-                                      'BookingForm1',
-                                      queryParameters: {
-                                        'devmode': serializeParam(
-                                          false,
-                                          ParamType.bool,
-                                        ),
-                                        'customerId': serializeParam(
-                                          bookingForm2CustomersRow?.id,
-                                          ParamType.String,
-                                        ),
-                                      }.withoutNulls,
-                                    );
-                                  },
-                                  child: Text(
-                                    'Book Now',
-                                    style: FlutterFlowTheme.of(context)
-                                        .bodyMedium
-                                        .override(
-                                          fontFamily: 'Montserrat',
-                                          color: FlutterFlowTheme.of(context)
-                                              .primary,
-                                          letterSpacing: 0.0,
-                                        ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Container(
-                          width: MediaQuery.sizeOf(context).width * 1.0,
-                          height: 48.0,
-                          decoration: BoxDecoration(
-                            color: FlutterFlowTheme.of(context)
-                                .secondaryBackground,
-                          ),
-                          child: Align(
-                            alignment: AlignmentDirectional(-1.0, 0.0),
-                            child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
-                                  16.0, 0.0, 0.0, 0.0),
-                              child: Text(
-                                'Bookings',
-                                style: FlutterFlowTheme.of(context)
-                                    .bodyMedium
-                                    .override(
-                                      fontFamily: 'Montserrat',
-                                      color:
-                                          FlutterFlowTheme.of(context).primary,
-                                      letterSpacing: 0.0,
-                                    ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Container(
-                          width: MediaQuery.sizeOf(context).width * 1.0,
-                          height: 48.0,
-                          decoration: BoxDecoration(
-                            color: FlutterFlowTheme.of(context)
-                                .secondaryBackground,
-                          ),
-                          child: Align(
-                            alignment: AlignmentDirectional(-1.0, 0.0),
-                            child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
-                                  16.0, 0.0, 0.0, 0.0),
-                              child: Text(
-                                'Contract Equiry',
-                                style: FlutterFlowTheme.of(context)
-                                    .bodyMedium
-                                    .override(
-                                      fontFamily: 'Montserrat',
-                                      color:
-                                          FlutterFlowTheme.of(context).primary,
-                                      letterSpacing: 0.0,
-                                    ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Container(
-                          width: MediaQuery.sizeOf(context).width * 1.0,
-                          height: 48.0,
-                          decoration: BoxDecoration(
-                            color: FlutterFlowTheme.of(context)
-                                .secondaryBackground,
-                          ),
-                          child: Align(
-                            alignment: AlignmentDirectional(-1.0, 0.0),
-                            child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
-                                  16.0, 0.0, 0.0, 0.0),
-                              child: Text(
-                                'Our Website',
-                                style: FlutterFlowTheme.of(context)
-                                    .bodyMedium
-                                    .override(
-                                      fontFamily: 'Montserrat',
-                                      color:
-                                          FlutterFlowTheme.of(context).primary,
-                                      letterSpacing: 0.0,
-                                    ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Container(
-                          width: MediaQuery.sizeOf(context).width * 1.0,
-                          height: 48.0,
-                          decoration: BoxDecoration(
-                            color: FlutterFlowTheme.of(context)
-                                .secondaryBackground,
-                          ),
-                          child: Align(
-                            alignment: AlignmentDirectional(-1.0, 0.0),
-                            child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
-                                  16.0, 0.0, 0.0, 0.0),
-                              child: Text(
-                                'Contact Us',
-                                style: FlutterFlowTheme.of(context)
-                                    .bodyMedium
-                                    .override(
-                                      fontFamily: 'Montserrat',
-                                      color:
-                                          FlutterFlowTheme.of(context).primary,
-                                      letterSpacing: 0.0,
-                                    ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        InkWell(
-                          splashColor: Colors.transparent,
-                          focusColor: Colors.transparent,
-                          hoverColor: Colors.transparent,
-                          highlightColor: Colors.transparent,
-                          onTap: () async {
-                            GoRouter.of(context).prepareAuthEvent();
-                            await authManager.signOut();
-                            GoRouter.of(context).clearRedirectLocation();
-
-                            context.goNamedAuth('AuthPage', context.mounted);
-                          },
-                          child: Container(
-                            width: MediaQuery.sizeOf(context).width * 1.0,
-                            height: 48.0,
-                            decoration: BoxDecoration(
-                              color: FlutterFlowTheme.of(context)
-                                  .secondaryBackground,
-                            ),
-                            child: Align(
-                              alignment: AlignmentDirectional(-1.0, 0.0),
-                              child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
-                                    16.0, 0.0, 0.0, 0.0),
-                                child: InkWell(
-                                  splashColor: Colors.transparent,
-                                  focusColor: Colors.transparent,
-                                  hoverColor: Colors.transparent,
-                                  highlightColor: Colors.transparent,
-                                  onTap: () async {
-                                    context.pushNamed('AuthPage');
-                                  },
-                                  child: Text(
-                                    'Log Out',
-                                    style: FlutterFlowTheme.of(context)
-                                        .bodyMedium
-                                        .override(
-                                          fontFamily: 'Montserrat',
-                                          color: FlutterFlowTheme.of(context)
-                                              .primary,
-                                          letterSpacing: 0.0,
-                                        ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Container(
-                          width: 100.0,
-                          height: 100.0,
-                          decoration: BoxDecoration(
-                            color: FlutterFlowTheme.of(context)
-                                .secondaryBackground,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+              child: wrapWithModel(
+                model: _model.drawerMainMenusModel,
+                updateCallback: () => safeSetState(() {}),
+                child: DrawerMainMenusWidget(),
               ),
             ),
             appBar: AppBar(
@@ -404,7 +144,7 @@ class _BookingForm2WidgetState extends State<BookingForm2Widget> {
                 hoverColor: Colors.transparent,
                 highlightColor: Colors.transparent,
                 onTap: () async {
-                  context.pushNamed('HomePageCopy');
+                  context.pushNamed('HomePage');
                 },
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8.0),
@@ -425,7 +165,7 @@ class _BookingForm2WidgetState extends State<BookingForm2Widget> {
                     hoverColor: Colors.transparent,
                     highlightColor: Colors.transparent,
                     onTap: () async {
-                      context.pushNamed('ProfilesCopy');
+                      context.pushNamed('Profile');
                     },
                     child: Icon(
                       Icons.person_rounded,
@@ -579,7 +319,7 @@ class _BookingForm2WidgetState extends State<BookingForm2Widget> {
                                           AlignmentDirectional(-1.0, 0.0),
                                       child: Padding(
                                         padding: EdgeInsetsDirectional.fromSTEB(
-                                            16.0, 24.0, 0.0, 0.0),
+                                            0.0, 24.0, 0.0, 0.0),
                                         child: Text(
                                           'Add on Services',
                                           style: FlutterFlowTheme.of(context)
@@ -641,503 +381,19 @@ class _BookingForm2WidgetState extends State<BookingForm2Widget> {
                                               child: Padding(
                                                 padding: EdgeInsetsDirectional
                                                     .fromSTEB(
-                                                        16.0, 16.0, 16.0, 0.0),
-                                                child: FutureBuilder<
-                                                    List<ServicesRow>>(
-                                                  future: ServicesTable()
-                                                      .querySingleRow(
-                                                    queryFn: (q) => q.eq(
-                                                      'name',
-                                                      valueOrDefault<String>(
-                                                        listViewServicesRow
-                                                            ?.name,
-                                                        '0',
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  builder: (context, snapshot) {
-                                                    // Customize what your widget looks like when it's loading.
-                                                    if (!snapshot.hasData) {
-                                                      return Center(
-                                                        child: SizedBox(
-                                                          width: 88.0,
-                                                          height: 88.0,
-                                                          child: SpinKitRipple(
-                                                            color: FlutterFlowTheme
-                                                                    .of(context)
-                                                                .tertiary,
-                                                            size: 88.0,
-                                                          ),
-                                                        ),
-                                                      );
-                                                    }
-                                                    List<ServicesRow>
-                                                        expandableServicesRowList =
-                                                        snapshot.data!;
-
-                                                    final expandableServicesRow =
-                                                        expandableServicesRowList
-                                                                .isNotEmpty
-                                                            ? expandableServicesRowList
-                                                                .first
-                                                            : null;
-
-                                                    return Container(
-                                                      width: double.infinity,
-                                                      color: Colors.white,
-                                                      child: ExpandableNotifier(
-                                                        controller: _model
-                                                            .expandableExpandableController1,
-                                                        child: ExpandablePanel(
-                                                          header: FutureBuilder<
-                                                              List<
-                                                                  ServicesRow>>(
-                                                            future: ServicesTable()
-                                                                .querySingleRow(
-                                                              queryFn: (q) =>
-                                                                  q.eq(
-                                                                'name',
-                                                                valueOrDefault<
-                                                                    String>(
-                                                                  listViewServicesRow
-                                                                      ?.name,
-                                                                  '0',
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            builder: (context,
-                                                                snapshot) {
-                                                              // Customize what your widget looks like when it's loading.
-                                                              if (!snapshot
-                                                                  .hasData) {
-                                                                return Center(
-                                                                  child:
-                                                                      SizedBox(
-                                                                    width: 88.0,
-                                                                    height:
-                                                                        88.0,
-                                                                    child:
-                                                                        SpinKitRipple(
-                                                                      color: FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .tertiary,
-                                                                      size:
-                                                                          88.0,
-                                                                    ),
-                                                                  ),
-                                                                );
-                                                              }
-                                                              List<ServicesRow>
-                                                                  textServicesRowList =
-                                                                  snapshot
-                                                                      .data!;
-
-                                                              final textServicesRow =
-                                                                  textServicesRowList
-                                                                          .isNotEmpty
-                                                                      ? textServicesRowList
-                                                                          .first
-                                                                      : null;
-
-                                                              return Text(
-                                                                'General Servicing',
-                                                                style: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .labelLarge
-                                                                    .override(
-                                                                      fontFamily:
-                                                                          'Montserrat',
-                                                                      color: FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .primaryText,
-                                                                      letterSpacing:
-                                                                          0.0,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w600,
-                                                                    ),
-                                                              );
-                                                            },
-                                                          ),
-                                                          collapsed: Container(
-                                                            width: MediaQuery
-                                                                        .sizeOf(
-                                                                            context)
-                                                                    .width *
-                                                                0.0,
-                                                            height: 0.0,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color: FlutterFlowTheme
-                                                                      .of(context)
-                                                                  .info,
-                                                            ),
-                                                            child: Padding(
-                                                              padding:
-                                                                  EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                          0.0,
-                                                                          8.0,
-                                                                          0.0,
-                                                                          0.0),
-                                                              child: Text(
-                                                                'Empty',
-                                                                style: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodySmall
-                                                                    .override(
-                                                                      fontFamily:
-                                                                          'Montserrat',
-                                                                      fontSize:
-                                                                          0.0,
-                                                                      letterSpacing:
-                                                                          0.0,
-                                                                    ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          expanded: Column(
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .max,
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Align(
-                                                                alignment:
-                                                                    AlignmentDirectional(
-                                                                        -1.0,
-                                                                        0.0),
-                                                                child: Padding(
-                                                                  padding: EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                          0.0,
-                                                                          16.0,
-                                                                          0.0,
-                                                                          0.0),
-                                                                  child: Text(
-                                                                    'One time service',
-                                                                    style: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .bodyMedium
-                                                                        .override(
-                                                                          fontFamily:
-                                                                              'Montserrat',
-                                                                          color:
-                                                                              Color(0xFF6B6B6B),
-                                                                          letterSpacing:
-                                                                              0.0,
-                                                                          fontWeight:
-                                                                              FontWeight.normal,
-                                                                        ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              Padding(
-                                                                padding:
-                                                                    EdgeInsetsDirectional
-                                                                        .fromSTEB(
-                                                                            0.0,
-                                                                            0.0,
-                                                                            16.0,
-                                                                            0.0),
-                                                                child: Row(
-                                                                  mainAxisSize:
-                                                                      MainAxisSize
-                                                                          .max,
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .spaceBetween,
-                                                                  children: [
-                                                                    Align(
-                                                                      alignment:
-                                                                          AlignmentDirectional(
-                                                                              -1.0,
-                                                                              0.0),
-                                                                      child:
-                                                                          Text(
-                                                                        'General Servicing',
-                                                                        style: FlutterFlowTheme.of(context)
-                                                                            .labelLarge
-                                                                            .override(
-                                                                              fontFamily: 'Montserrat',
-                                                                              color: FlutterFlowTheme.of(context).primaryText,
-                                                                              letterSpacing: 0.0,
-                                                                              fontWeight: FontWeight.w500,
-                                                                            ),
-                                                                      ),
-                                                                    ),
-                                                                    Column(
-                                                                      mainAxisSize:
-                                                                          MainAxisSize
-                                                                              .max,
-                                                                      children: [
-                                                                        Row(
-                                                                          mainAxisSize:
-                                                                              MainAxisSize.max,
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.end,
-                                                                          children: [
-                                                                            Container(
-                                                                              width: 100.0,
-                                                                              height: 30.0,
-                                                                              decoration: BoxDecoration(
-                                                                                color: FlutterFlowTheme.of(context).info,
-                                                                                borderRadius: BorderRadius.circular(5.0),
-                                                                                shape: BoxShape.rectangle,
-                                                                                border: Border.all(
-                                                                                  color: FlutterFlowTheme.of(context).primary,
-                                                                                  width: 2.0,
-                                                                                ),
-                                                                              ),
-                                                                              child: FlutterFlowCountController(
-                                                                                decrementIconBuilder: (enabled) => Icon(
-                                                                                  Icons.horizontal_rule,
-                                                                                  color: enabled ? FlutterFlowTheme.of(context).secondaryText : FlutterFlowTheme.of(context).alternate,
-                                                                                  size: 12.0,
-                                                                                ),
-                                                                                incrementIconBuilder: (enabled) => FaIcon(
-                                                                                  FontAwesomeIcons.plus,
-                                                                                  color: enabled ? FlutterFlowTheme.of(context).primary : FlutterFlowTheme.of(context).alternate,
-                                                                                  size: 12.0,
-                                                                                ),
-                                                                                countBuilder: (count) => Text(
-                                                                                  count.toString(),
-                                                                                  style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                                                                        fontFamily: 'Montserrat',
-                                                                                        letterSpacing: 0.0,
-                                                                                      ),
-                                                                                ),
-                                                                                count: _model.countControllerValue1 ??= 0,
-                                                                                updateCount: (count) async {
-                                                                                  setState(() => _model.countControllerValue1 = count);
-                                                                                  setState(() {});
-                                                                                },
-                                                                                stepSize: 1,
-                                                                                minimum: 0,
-                                                                                maximum: 10,
-                                                                                contentPadding: EdgeInsetsDirectional.fromSTEB(10.0, 0.0, 10.0, 0.0),
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                              Align(
-                                                                alignment:
-                                                                    AlignmentDirectional(
-                                                                        -1.0,
-                                                                        0.0),
-                                                                child: Padding(
-                                                                  padding: EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                          0.0,
-                                                                          16.0,
-                                                                          0.0,
-                                                                          0.0),
-                                                                  child: Text(
-                                                                    'Yearly Contract Enquiry',
-                                                                    style: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .bodyMedium
-                                                                        .override(
-                                                                          fontFamily:
-                                                                              'Montserrat',
-                                                                          color:
-                                                                              FlutterFlowTheme.of(context).primaryText,
-                                                                          fontSize:
-                                                                              16.0,
-                                                                          letterSpacing:
-                                                                              0.0,
-                                                                          fontWeight:
-                                                                              FontWeight.normal,
-                                                                        ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              Padding(
-                                                                padding:
-                                                                    EdgeInsetsDirectional
-                                                                        .fromSTEB(
-                                                                            0.0,
-                                                                            0.0,
-                                                                            16.0,
-                                                                            0.0),
-                                                                child: Row(
-                                                                  mainAxisSize:
-                                                                      MainAxisSize
-                                                                          .max,
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .spaceBetween,
-                                                                  children: [
-                                                                    Align(
-                                                                      alignment:
-                                                                          AlignmentDirectional(
-                                                                              -1.0,
-                                                                              0.0),
-                                                                      child:
-                                                                          Text(
-                                                                        'Save up to 28% (bef. GST). \nDiscover pricing details here.',
-                                                                        style: FlutterFlowTheme.of(context)
-                                                                            .labelLarge
-                                                                            .override(
-                                                                              fontFamily: 'Montserrat',
-                                                                              color: FlutterFlowTheme.of(context).secondaryText,
-                                                                              fontSize: 10.0,
-                                                                              letterSpacing: 0.0,
-                                                                              fontWeight: FontWeight.w500,
-                                                                              fontStyle: FontStyle.italic,
-                                                                            ),
-                                                                      ),
-                                                                    ),
-                                                                    Column(
-                                                                      mainAxisSize:
-                                                                          MainAxisSize
-                                                                              .max,
-                                                                      children: [
-                                                                        Row(
-                                                                          mainAxisSize:
-                                                                              MainAxisSize.max,
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.end,
-                                                                          children: [
-                                                                            Container(
-                                                                              width: 100.0,
-                                                                              height: 30.0,
-                                                                              decoration: BoxDecoration(
-                                                                                color: FlutterFlowTheme.of(context).info,
-                                                                                borderRadius: BorderRadius.circular(5.0),
-                                                                                shape: BoxShape.rectangle,
-                                                                                border: Border.all(
-                                                                                  color: FlutterFlowTheme.of(context).primary,
-                                                                                  width: 2.0,
-                                                                                ),
-                                                                              ),
-                                                                              child: FlutterFlowCountController(
-                                                                                decrementIconBuilder: (enabled) => Icon(
-                                                                                  Icons.horizontal_rule,
-                                                                                  color: enabled ? FlutterFlowTheme.of(context).secondaryText : FlutterFlowTheme.of(context).alternate,
-                                                                                  size: 12.0,
-                                                                                ),
-                                                                                incrementIconBuilder: (enabled) => FaIcon(
-                                                                                  FontAwesomeIcons.plus,
-                                                                                  color: enabled ? FlutterFlowTheme.of(context).primary : FlutterFlowTheme.of(context).alternate,
-                                                                                  size: 12.0,
-                                                                                ),
-                                                                                countBuilder: (count) => Text(
-                                                                                  count.toString(),
-                                                                                  style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                                                                        fontFamily: 'Montserrat',
-                                                                                        letterSpacing: 0.0,
-                                                                                      ),
-                                                                                ),
-                                                                                count: _model.countControllerValue2 ??= 0,
-                                                                                updateCount: (count) => setState(() => _model.countControllerValue2 = count),
-                                                                                stepSize: 1,
-                                                                                minimum: 0,
-                                                                                maximum: 10,
-                                                                                contentPadding: EdgeInsetsDirectional.fromSTEB(10.0, 0.0, 10.0, 0.0),
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          theme:
-                                                              ExpandableThemeData(
-                                                            tapHeaderToExpand:
-                                                                true,
-                                                            tapBodyToExpand:
-                                                                false,
-                                                            tapBodyToCollapse:
-                                                                false,
-                                                            headerAlignment:
-                                                                ExpandablePanelHeaderAlignment
-                                                                    .center,
-                                                            hasIcon: true,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    );
-                                                  },
-                                                ),
-                                              ),
-                                            ),
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .info,
-                                              ),
-                                              child: Padding(
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
-                                                        16.0, 16.0, 16.0, 0.0),
+                                                        0.0, 16.0, 0.0, 0.0),
                                                 child: Container(
                                                   width: double.infinity,
                                                   color: Colors.white,
                                                   child: ExpandableNotifier(
                                                     controller: _model
-                                                        .expandableExpandableController2,
+                                                        .expandableExpandableController1,
                                                     child: ExpandablePanel(
-                                                      header: FutureBuilder<
-                                                          List<ServicesRow>>(
-                                                        future: ServicesTable()
-                                                            .querySingleRow(
-                                                          queryFn: (q) => q.eq(
-                                                            'name',
-                                                            valueOrDefault<
-                                                                String>(
-                                                              listViewServicesRow
-                                                                  ?.name,
-                                                              '0',
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        builder: (context,
-                                                            snapshot) {
-                                                          // Customize what your widget looks like when it's loading.
-                                                          if (!snapshot
-                                                              .hasData) {
-                                                            return Center(
-                                                              child: SizedBox(
-                                                                width: 88.0,
-                                                                height: 88.0,
-                                                                child:
-                                                                    SpinKitRipple(
-                                                                  color: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .tertiary,
-                                                                  size: 88.0,
-                                                                ),
-                                                              ),
-                                                            );
-                                                          }
-                                                          List<ServicesRow>
-                                                              textServicesRowList =
-                                                              snapshot.data!;
-
-                                                          final textServicesRow =
-                                                              textServicesRowList
-                                                                      .isNotEmpty
-                                                                  ? textServicesRowList
-                                                                      .first
-                                                                  : null;
-
-                                                          return Text(
-                                                            'Chemical Overhaul',
-                                                            style: FlutterFlowTheme
-                                                                    .of(context)
+                                                      header: Text(
+                                                        'General Servicing',
+                                                        style:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
                                                                 .labelLarge
                                                                 .override(
                                                                   fontFamily:
@@ -1151,8 +407,6 @@ class _BookingForm2WidgetState extends State<BookingForm2Widget> {
                                                                       FontWeight
                                                                           .w600,
                                                                 ),
-                                                          );
-                                                        },
                                                       ),
                                                       collapsed: Container(
                                                         decoration:
@@ -1187,121 +441,341 @@ class _BookingForm2WidgetState extends State<BookingForm2Widget> {
                                                       expanded: Column(
                                                         mainAxisSize:
                                                             MainAxisSize.max,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
                                                         children: [
-                                                          Padding(
-                                                            padding:
-                                                                EdgeInsetsDirectional
-                                                                    .fromSTEB(
-                                                                        0.0,
-                                                                        16.0,
-                                                                        16.0,
-                                                                        0.0),
-                                                            child: Row(
-                                                              mainAxisSize:
-                                                                  MainAxisSize
-                                                                      .max,
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceBetween,
-                                                              children: [
-                                                                Align(
-                                                                  alignment:
-                                                                      AlignmentDirectional(
-                                                                          -1.0,
+                                                          if (!widget!
+                                                              .useContract)
+                                                            Container(
+                                                              width: MediaQuery
+                                                                          .sizeOf(
+                                                                              context)
+                                                                      .width *
+                                                                  1.0,
+                                                              decoration:
+                                                                  BoxDecoration(),
+                                                              child: Column(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .max,
+                                                                children: [
+                                                                  Align(
+                                                                    alignment:
+                                                                        AlignmentDirectional(
+                                                                            -1.0,
+                                                                            0.0),
+                                                                    child:
+                                                                        Padding(
+                                                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                                                          0.0,
+                                                                          16.0,
+                                                                          0.0,
                                                                           0.0),
-                                                                  child: Text(
-                                                                    'Cassete',
-                                                                    style: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .labelLarge
-                                                                        .override(
-                                                                          fontFamily:
-                                                                              'Montserrat',
-                                                                          color:
-                                                                              FlutterFlowTheme.of(context).primaryText,
-                                                                          letterSpacing:
-                                                                              0.0,
-                                                                          fontWeight:
-                                                                              FontWeight.w500,
-                                                                        ),
+                                                                      child:
+                                                                          Text(
+                                                                        'One time service',
+                                                                        style: FlutterFlowTheme.of(context)
+                                                                            .bodyMedium
+                                                                            .override(
+                                                                              fontFamily: 'Montserrat',
+                                                                              color: Color(0xFF6B6B6B),
+                                                                              letterSpacing: 0.0,
+                                                                              fontWeight: FontWeight.normal,
+                                                                            ),
+                                                                      ),
+                                                                    ),
                                                                   ),
-                                                                ),
-                                                                Column(
-                                                                  mainAxisSize:
-                                                                      MainAxisSize
-                                                                          .max,
-                                                                  children: [
-                                                                    Row(
+                                                                  Padding(
+                                                                    padding: EdgeInsetsDirectional
+                                                                        .fromSTEB(
+                                                                            0.0,
+                                                                            0.0,
+                                                                            16.0,
+                                                                            0.0),
+                                                                    child: Row(
                                                                       mainAxisSize:
                                                                           MainAxisSize
                                                                               .max,
                                                                       mainAxisAlignment:
                                                                           MainAxisAlignment
-                                                                              .end,
+                                                                              .spaceBetween,
                                                                       children: [
-                                                                        Container(
-                                                                          width:
-                                                                              100.0,
-                                                                          height:
-                                                                              30.0,
-                                                                          decoration:
-                                                                              BoxDecoration(
-                                                                            color:
-                                                                                FlutterFlowTheme.of(context).info,
-                                                                            borderRadius:
-                                                                                BorderRadius.circular(5.0),
-                                                                            shape:
-                                                                                BoxShape.rectangle,
-                                                                            border:
-                                                                                Border.all(
-                                                                              color: FlutterFlowTheme.of(context).primary,
-                                                                              width: 2.0,
-                                                                            ),
-                                                                          ),
+                                                                        Align(
+                                                                          alignment: AlignmentDirectional(
+                                                                              -1.0,
+                                                                              0.0),
                                                                           child:
-                                                                              FlutterFlowCountController(
-                                                                            decrementIconBuilder: (enabled) =>
-                                                                                Icon(
-                                                                              Icons.horizontal_rule,
-                                                                              color: enabled ? FlutterFlowTheme.of(context).secondaryText : FlutterFlowTheme.of(context).alternate,
-                                                                              size: 12.0,
-                                                                            ),
-                                                                            incrementIconBuilder: (enabled) =>
-                                                                                FaIcon(
-                                                                              FontAwesomeIcons.plus,
-                                                                              color: enabled ? FlutterFlowTheme.of(context).primary : FlutterFlowTheme.of(context).alternate,
-                                                                              size: 12.0,
-                                                                            ),
-                                                                            countBuilder: (count) =>
-                                                                                Text(
-                                                                              count.toString(),
-                                                                              style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                                                                    fontFamily: 'Montserrat',
-                                                                                    letterSpacing: 0.0,
-                                                                                  ),
-                                                                            ),
-                                                                            count: _model.countControllerValue3 ??=
-                                                                                0,
-                                                                            updateCount: (count) =>
-                                                                                setState(() => _model.countControllerValue3 = count),
-                                                                            stepSize:
-                                                                                1,
-                                                                            minimum:
-                                                                                0,
-                                                                            maximum:
-                                                                                10,
-                                                                            contentPadding: EdgeInsetsDirectional.fromSTEB(
-                                                                                10.0,
-                                                                                0.0,
-                                                                                10.0,
-                                                                                0.0),
+                                                                              Text(
+                                                                            'General Servicing',
+                                                                            style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                  fontFamily: 'Montserrat',
+                                                                                  color: FlutterFlowTheme.of(context).primaryText,
+                                                                                  letterSpacing: 0.0,
+                                                                                  fontWeight: FontWeight.w500,
+                                                                                ),
                                                                           ),
+                                                                        ),
+                                                                        Column(
+                                                                          mainAxisSize:
+                                                                              MainAxisSize.max,
+                                                                          children: [
+                                                                            Row(
+                                                                              mainAxisSize: MainAxisSize.max,
+                                                                              mainAxisAlignment: MainAxisAlignment.end,
+                                                                              children: [
+                                                                                Container(
+                                                                                  width: 100.0,
+                                                                                  height: 30.0,
+                                                                                  decoration: BoxDecoration(
+                                                                                    color: FlutterFlowTheme.of(context).info,
+                                                                                    borderRadius: BorderRadius.circular(5.0),
+                                                                                    shape: BoxShape.rectangle,
+                                                                                    border: Border.all(
+                                                                                      color: FlutterFlowTheme.of(context).primary,
+                                                                                      width: 2.0,
+                                                                                    ),
+                                                                                  ),
+                                                                                  child: FlutterFlowCountController(
+                                                                                    decrementIconBuilder: (enabled) => Icon(
+                                                                                      Icons.horizontal_rule,
+                                                                                      color: enabled ? FlutterFlowTheme.of(context).secondaryText : FlutterFlowTheme.of(context).alternate,
+                                                                                      size: 12.0,
+                                                                                    ),
+                                                                                    incrementIconBuilder: (enabled) => FaIcon(
+                                                                                      FontAwesomeIcons.plus,
+                                                                                      color: enabled ? FlutterFlowTheme.of(context).primary : FlutterFlowTheme.of(context).alternate,
+                                                                                      size: 12.0,
+                                                                                    ),
+                                                                                    countBuilder: (count) => Text(
+                                                                                      count.toString(),
+                                                                                      style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                                                                            fontFamily: 'Montserrat',
+                                                                                            letterSpacing: 0.0,
+                                                                                          ),
+                                                                                    ),
+                                                                                    count: _model.countControllerValue1 ??= 0,
+                                                                                    updateCount: (count) async {
+                                                                                      safeSetState(() => _model.countControllerValue1 = count);
+                                                                                      FFAppState().cart = [];
+                                                                                      safeSetState(() {});
+                                                                                      FFAppState().addToCart(CartStruct(
+                                                                                        serviceitemId: 1,
+                                                                                        quantity: valueOrDefault<int>(
+                                                                                          _model.countControllerValue1,
+                                                                                          0,
+                                                                                        ),
+                                                                                        total: valueOrDefault<double>(
+                                                                                          ((_model.countControllerValue1!) * 50).toDouble(),
+                                                                                          0.0,
+                                                                                        ),
+                                                                                      ));
+                                                                                      safeSetState(() {});
+                                                                                      _model.totalCart = await actions.sumCartTotal();
+                                                                                      FFAppState().totalCart = valueOrDefault<double>(
+                                                                                        _model.totalCart,
+                                                                                        0.0,
+                                                                                      );
+                                                                                      safeSetState(() {});
+
+                                                                                      safeSetState(() {});
+                                                                                    },
+                                                                                    stepSize: 1,
+                                                                                    minimum: 0,
+                                                                                    maximum: 10,
+                                                                                    contentPadding: EdgeInsetsDirectional.fromSTEB(10.0, 0.0, 10.0, 0.0),
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          ],
                                                                         ),
                                                                       ],
                                                                     ),
-                                                                  ],
-                                                                ),
-                                                              ],
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          if (widget!
+                                                              .useContract)
+                                                            Container(
+                                                              width: MediaQuery
+                                                                          .sizeOf(
+                                                                              context)
+                                                                      .width *
+                                                                  1.0,
+                                                              decoration:
+                                                                  BoxDecoration(),
+                                                              child: Column(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .max,
+                                                                children: [
+                                                                  Align(
+                                                                    alignment:
+                                                                        AlignmentDirectional(
+                                                                            -1.0,
+                                                                            0.0),
+                                                                    child:
+                                                                        Padding(
+                                                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                                                          0.0,
+                                                                          16.0,
+                                                                          0.0,
+                                                                          0.0),
+                                                                      child:
+                                                                          Text(
+                                                                        'Contract',
+                                                                        style: FlutterFlowTheme.of(context)
+                                                                            .bodyMedium
+                                                                            .override(
+                                                                              fontFamily: 'Montserrat',
+                                                                              color: Color(0xFF6B6B6B),
+                                                                              letterSpacing: 0.0,
+                                                                              fontWeight: FontWeight.normal,
+                                                                            ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  Padding(
+                                                                    padding: EdgeInsetsDirectional
+                                                                        .fromSTEB(
+                                                                            0.0,
+                                                                            0.0,
+                                                                            16.0,
+                                                                            0.0),
+                                                                    child: Row(
+                                                                      mainAxisSize:
+                                                                          MainAxisSize
+                                                                              .max,
+                                                                      mainAxisAlignment:
+                                                                          MainAxisAlignment
+                                                                              .spaceBetween,
+                                                                      children: [
+                                                                        Align(
+                                                                          alignment: AlignmentDirectional(
+                                                                              -1.0,
+                                                                              0.0),
+                                                                          child:
+                                                                              Text(
+                                                                            'General Servicing',
+                                                                            style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                  fontFamily: 'Montserrat',
+                                                                                  color: FlutterFlowTheme.of(context).primaryText,
+                                                                                  letterSpacing: 0.0,
+                                                                                  fontWeight: FontWeight.w500,
+                                                                                ),
+                                                                          ),
+                                                                        ),
+                                                                        Column(
+                                                                          mainAxisSize:
+                                                                              MainAxisSize.max,
+                                                                          children: [
+                                                                            Row(
+                                                                              mainAxisSize: MainAxisSize.max,
+                                                                              mainAxisAlignment: MainAxisAlignment.end,
+                                                                              children: [
+                                                                                Container(
+                                                                                  width: 100.0,
+                                                                                  height: 30.0,
+                                                                                  decoration: BoxDecoration(
+                                                                                    color: FlutterFlowTheme.of(context).info,
+                                                                                    borderRadius: BorderRadius.circular(5.0),
+                                                                                    shape: BoxShape.rectangle,
+                                                                                    border: Border.all(
+                                                                                      color: FlutterFlowTheme.of(context).primary,
+                                                                                      width: 2.0,
+                                                                                    ),
+                                                                                  ),
+                                                                                  child: FlutterFlowCountController(
+                                                                                    decrementIconBuilder: (enabled) => Icon(
+                                                                                      Icons.horizontal_rule,
+                                                                                      color: enabled ? FlutterFlowTheme.of(context).secondaryText : FlutterFlowTheme.of(context).alternate,
+                                                                                      size: 12.0,
+                                                                                    ),
+                                                                                    incrementIconBuilder: (enabled) => FaIcon(
+                                                                                      FontAwesomeIcons.plus,
+                                                                                      color: enabled ? FlutterFlowTheme.of(context).primary : FlutterFlowTheme.of(context).alternate,
+                                                                                      size: 12.0,
+                                                                                    ),
+                                                                                    countBuilder: (count) => Text(
+                                                                                      count.toString(),
+                                                                                      style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                                                                            fontFamily: 'Montserrat',
+                                                                                            letterSpacing: 0.0,
+                                                                                          ),
+                                                                                    ),
+                                                                                    count: _model.countControllerCtrValue ??= 0,
+                                                                                    updateCount: (count) async {
+                                                                                      safeSetState(() => _model.countControllerCtrValue = count);
+                                                                                      FFAppState().cart = [];
+                                                                                      safeSetState(() {});
+                                                                                      FFAppState().addToCart(CartStruct(
+                                                                                        serviceitemId: 1,
+                                                                                        quantity: valueOrDefault<int>(
+                                                                                          _model.countControllerCtrValue,
+                                                                                          0,
+                                                                                        ),
+                                                                                        total: 0.0,
+                                                                                      ));
+                                                                                      safeSetState(() {});
+                                                                                      _model.totalCart2 = await actions.sumCartTotal();
+                                                                                      FFAppState().totalCart = valueOrDefault<double>(
+                                                                                        _model.totalCart2,
+                                                                                        0.0,
+                                                                                      );
+                                                                                      safeSetState(() {});
+
+                                                                                      safeSetState(() {});
+                                                                                    },
+                                                                                    stepSize: 1,
+                                                                                    minimum: 0,
+                                                                                    maximum: 10,
+                                                                                    contentPadding: EdgeInsetsDirectional.fromSTEB(10.0, 0.0, 10.0, 0.0),
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          Align(
+                                                            alignment:
+                                                                AlignmentDirectional(
+                                                                    -1.0, 0.0),
+                                                            child: Padding(
+                                                              padding:
+                                                                  EdgeInsetsDirectional
+                                                                      .fromSTEB(
+                                                                          0.0,
+                                                                          16.0,
+                                                                          0.0,
+                                                                          0.0),
+                                                              child: Text(
+                                                                'Yearly Contract Enquiry',
+                                                                style: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMedium
+                                                                    .override(
+                                                                      fontFamily:
+                                                                          'Montserrat',
+                                                                      color: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .primaryText,
+                                                                      fontSize:
+                                                                          14.0,
+                                                                      letterSpacing:
+                                                                          0.0,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .normal,
+                                                                    ),
+                                                              ),
                                                             ),
                                                           ),
                                                           Padding(
@@ -1309,125 +783,9 @@ class _BookingForm2WidgetState extends State<BookingForm2Widget> {
                                                                 EdgeInsetsDirectional
                                                                     .fromSTEB(
                                                                         0.0,
-                                                                        16.0,
-                                                                        16.0,
-                                                                        0.0),
-                                                            child: Row(
-                                                              mainAxisSize:
-                                                                  MainAxisSize
-                                                                      .max,
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceBetween,
-                                                              children: [
-                                                                Align(
-                                                                  alignment:
-                                                                      AlignmentDirectional(
-                                                                          -1.0,
-                                                                          0.0),
-                                                                  child: Text(
-                                                                    '12000 - 24000 BTU',
-                                                                    style: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .labelLarge
-                                                                        .override(
-                                                                          fontFamily:
-                                                                              'Montserrat',
-                                                                          color:
-                                                                              FlutterFlowTheme.of(context).primaryText,
-                                                                          letterSpacing:
-                                                                              0.0,
-                                                                          fontWeight:
-                                                                              FontWeight.w500,
-                                                                        ),
-                                                                  ),
-                                                                ),
-                                                                Column(
-                                                                  mainAxisSize:
-                                                                      MainAxisSize
-                                                                          .max,
-                                                                  children: [
-                                                                    Row(
-                                                                      mainAxisSize:
-                                                                          MainAxisSize
-                                                                              .max,
-                                                                      mainAxisAlignment:
-                                                                          MainAxisAlignment
-                                                                              .end,
-                                                                      children: [
-                                                                        Container(
-                                                                          width:
-                                                                              100.0,
-                                                                          height:
-                                                                              30.0,
-                                                                          decoration:
-                                                                              BoxDecoration(
-                                                                            color:
-                                                                                FlutterFlowTheme.of(context).info,
-                                                                            borderRadius:
-                                                                                BorderRadius.circular(5.0),
-                                                                            shape:
-                                                                                BoxShape.rectangle,
-                                                                            border:
-                                                                                Border.all(
-                                                                              color: FlutterFlowTheme.of(context).primary,
-                                                                              width: 2.0,
-                                                                            ),
-                                                                          ),
-                                                                          child:
-                                                                              FlutterFlowCountController(
-                                                                            decrementIconBuilder: (enabled) =>
-                                                                                Icon(
-                                                                              Icons.horizontal_rule,
-                                                                              color: enabled ? FlutterFlowTheme.of(context).secondaryText : FlutterFlowTheme.of(context).alternate,
-                                                                              size: 12.0,
-                                                                            ),
-                                                                            incrementIconBuilder: (enabled) =>
-                                                                                FaIcon(
-                                                                              FontAwesomeIcons.plus,
-                                                                              color: enabled ? FlutterFlowTheme.of(context).primary : FlutterFlowTheme.of(context).alternate,
-                                                                              size: 12.0,
-                                                                            ),
-                                                                            countBuilder: (count) =>
-                                                                                Text(
-                                                                              count.toString(),
-                                                                              style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                                                                    fontFamily: 'Montserrat',
-                                                                                    letterSpacing: 0.0,
-                                                                                  ),
-                                                                            ),
-                                                                            count: _model.countControllerValue4 ??=
-                                                                                0,
-                                                                            updateCount: (count) =>
-                                                                                setState(() => _model.countControllerValue4 = count),
-                                                                            stepSize:
-                                                                                1,
-                                                                            minimum:
-                                                                                0,
-                                                                            maximum:
-                                                                                10,
-                                                                            contentPadding: EdgeInsetsDirectional.fromSTEB(
-                                                                                10.0,
-                                                                                0.0,
-                                                                                10.0,
-                                                                                0.0),
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                          Padding(
-                                                            padding:
-                                                                EdgeInsetsDirectional
-                                                                    .fromSTEB(
                                                                         0.0,
                                                                         16.0,
-                                                                        16.0,
-                                                                        0.0),
+                                                                        16.0),
                                                             child: Row(
                                                               mainAxisSize:
                                                                   MainAxisSize
@@ -1442,7 +800,7 @@ class _BookingForm2WidgetState extends State<BookingForm2Widget> {
                                                                           -1.0,
                                                                           0.0),
                                                                   child: Text(
-                                                                    '9000 - 12000 BTU',
+                                                                    'Save up to 28% (bef. GST). \nDiscover pricing details here.',
                                                                     style: FlutterFlowTheme.of(
                                                                             context)
                                                                         .labelLarge
@@ -1450,11 +808,15 @@ class _BookingForm2WidgetState extends State<BookingForm2Widget> {
                                                                           fontFamily:
                                                                               'Montserrat',
                                                                           color:
-                                                                              FlutterFlowTheme.of(context).primaryText,
+                                                                              FlutterFlowTheme.of(context).secondaryText,
+                                                                          fontSize:
+                                                                              10.0,
                                                                           letterSpacing:
                                                                               0.0,
                                                                           fontWeight:
                                                                               FontWeight.w500,
+                                                                          fontStyle:
+                                                                              FontStyle.italic,
                                                                         ),
                                                                   ),
                                                                 ),
@@ -1512,10 +874,10 @@ class _BookingForm2WidgetState extends State<BookingForm2Widget> {
                                                                                     letterSpacing: 0.0,
                                                                                   ),
                                                                             ),
-                                                                            count: _model.countControllerValue5 ??=
+                                                                            count: _model.countControllerValue2 ??=
                                                                                 0,
                                                                             updateCount: (count) =>
-                                                                                setState(() => _model.countControllerValue5 = count),
+                                                                                safeSetState(() => _model.countControllerValue2 = count),
                                                                             stepSize:
                                                                                 1,
                                                                             minimum:
@@ -1563,7 +925,182 @@ class _BookingForm2WidgetState extends State<BookingForm2Widget> {
                                               child: Padding(
                                                 padding: EdgeInsetsDirectional
                                                     .fromSTEB(
-                                                        16.0, 16.0, 16.0, 0.0),
+                                                        0.0, 16.0, 0.0, 0.0),
+                                                child: Container(
+                                                  width: double.infinity,
+                                                  color: Colors.white,
+                                                  child: ExpandableNotifier(
+                                                    controller: _model
+                                                        .expandableExpandableController2,
+                                                    child: ExpandablePanel(
+                                                      header: Text(
+                                                        'Chemical Overhaul',
+                                                        style:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .labelLarge
+                                                                .override(
+                                                                  fontFamily:
+                                                                      'Montserrat',
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .primaryText,
+                                                                  letterSpacing:
+                                                                      0.0,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                ),
+                                                      ),
+                                                      collapsed: Container(
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .info,
+                                                        ),
+                                                        child: Padding(
+                                                          padding:
+                                                              EdgeInsetsDirectional
+                                                                  .fromSTEB(
+                                                                      0.0,
+                                                                      8.0,
+                                                                      0.0,
+                                                                      0.0),
+                                                          child: Text(
+                                                            'Empty',
+                                                            style: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .bodySmall
+                                                                .override(
+                                                                  fontFamily:
+                                                                      'Montserrat',
+                                                                  fontSize: 0.0,
+                                                                  letterSpacing:
+                                                                      0.0,
+                                                                ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      expanded: FutureBuilder<
+                                                          List<
+                                                              ServiceitemsRow>>(
+                                                        future:
+                                                            ServiceitemsTable()
+                                                                .queryRows(
+                                                          queryFn: (q) => q
+                                                              .eq(
+                                                                'service_id',
+                                                                2,
+                                                              )
+                                                              .eq(
+                                                                'visible_to_customer',
+                                                                true,
+                                                              ),
+                                                        ),
+                                                        builder: (context,
+                                                            snapshot) {
+                                                          // Customize what your widget looks like when it's loading.
+                                                          if (!snapshot
+                                                              .hasData) {
+                                                            return Center(
+                                                              child: SizedBox(
+                                                                width: 88.0,
+                                                                height: 88.0,
+                                                                child:
+                                                                    SpinKitRipple(
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .tertiary,
+                                                                  size: 88.0,
+                                                                ),
+                                                              ),
+                                                            );
+                                                          }
+                                                          List<ServiceitemsRow>
+                                                              columnServiceitemsRowList =
+                                                              snapshot.data!;
+
+                                                          return Column(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .max,
+                                                            children: List.generate(
+                                                                columnServiceitemsRowList
+                                                                    .length,
+                                                                (columnIndex) {
+                                                              final columnServiceitemsRow =
+                                                                  columnServiceitemsRowList[
+                                                                      columnIndex];
+                                                              return wrapWithModel(
+                                                                model: _model
+                                                                    .servicesItemFieldModels
+                                                                    .getModel(
+                                                                  columnServiceitemsRow
+                                                                      .id
+                                                                      .toString(),
+                                                                  columnIndex,
+                                                                ),
+                                                                updateCallback: () =>
+                                                                    safeSetState(
+                                                                        () {}),
+                                                                child:
+                                                                    ServicesItemFieldWidget(
+                                                                  key: Key(
+                                                                    'Keyp6a_${columnServiceitemsRow.id.toString()}',
+                                                                  ),
+                                                                  serviceitemname:
+                                                                      valueOrDefault<
+                                                                          String>(
+                                                                    columnServiceitemsRow
+                                                                        .name,
+                                                                    'Chemical Overhaul',
+                                                                  ),
+                                                                  serviceitemid:
+                                                                      columnServiceitemsRow
+                                                                          .id,
+                                                                  qty:
+                                                                      valueOrDefault<
+                                                                          int>(
+                                                                    _model
+                                                                        .countControllerValue1,
+                                                                    0,
+                                                                  ),
+                                                                  pricea:
+                                                                      columnServiceitemsRow
+                                                                          .price,
+                                                                ),
+                                                              );
+                                                            }),
+                                                          );
+                                                        },
+                                                      ),
+                                                      theme:
+                                                          ExpandableThemeData(
+                                                        tapHeaderToExpand: true,
+                                                        tapBodyToExpand: false,
+                                                        tapBodyToCollapse:
+                                                            false,
+                                                        headerAlignment:
+                                                            ExpandablePanelHeaderAlignment
+                                                                .center,
+                                                        hasIcon: true,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .info,
+                                              ),
+                                              child: Padding(
+                                                padding: EdgeInsetsDirectional
+                                                    .fromSTEB(
+                                                        0.0, 16.0, 0.0, 0.0),
                                                 child: Container(
                                                   width: double.infinity,
                                                   color: Colors.white,
@@ -1789,8 +1326,8 @@ class _BookingForm2WidgetState extends State<BookingForm2Widget> {
                                                                                       letterSpacing: 0.0,
                                                                                     ),
                                                                               ),
-                                                                              count: _model.countControllerValue6 ??= 0,
-                                                                              updateCount: (count) => setState(() => _model.countControllerValue6 = count),
+                                                                              count: _model.countControllerValue3 ??= 0,
+                                                                              updateCount: (count) => safeSetState(() => _model.countControllerValue3 = count),
                                                                               stepSize: 1,
                                                                               minimum: 0,
                                                                               maximum: 10,
@@ -1832,7 +1369,7 @@ class _BookingForm2WidgetState extends State<BookingForm2Widget> {
                                               child: Padding(
                                                 padding: EdgeInsetsDirectional
                                                     .fromSTEB(
-                                                        16.0, 16.0, 16.0, 0.0),
+                                                        0.0, 16.0, 0.0, 0.0),
                                                 child: Container(
                                                   width: double.infinity,
                                                   color: Colors.white,
@@ -2034,10 +1571,10 @@ class _BookingForm2WidgetState extends State<BookingForm2Widget> {
                                                                                     letterSpacing: 0.0,
                                                                                   ),
                                                                             ),
-                                                                            count: _model.countControllerValue7 ??=
+                                                                            count: _model.countControllerValue4 ??=
                                                                                 0,
                                                                             updateCount: (count) =>
-                                                                                setState(() => _model.countControllerValue7 = count),
+                                                                                safeSetState(() => _model.countControllerValue4 = count),
                                                                             stepSize:
                                                                                 1,
                                                                             minimum:
@@ -2082,7 +1619,7 @@ class _BookingForm2WidgetState extends State<BookingForm2Widget> {
                                     ),
                                     Padding(
                                       padding: EdgeInsetsDirectional.fromSTEB(
-                                          16.0, 16.0, 16.0, 0.0),
+                                          0.0, 16.0, 0.0, 0.0),
                                       child: Row(
                                         mainAxisSize: MainAxisSize.max,
                                         children: [
@@ -2153,7 +1690,34 @@ class _BookingForm2WidgetState extends State<BookingForm2Widget> {
                                               child: FFButtonWidget(
                                                 onPressed: () async {
                                                   context.pushNamed(
-                                                    'Booking2-2',
+                                                    'BookingForm3',
+                                                    queryParameters: {
+                                                      'devmode': serializeParam(
+                                                        false,
+                                                        ParamType.bool,
+                                                      ),
+                                                      'needLeader':
+                                                          serializeParam(
+                                                        widget!.needLeader,
+                                                        ParamType.bool,
+                                                      ),
+                                                      'customeraddressId':
+                                                          serializeParam(
+                                                        widget!
+                                                            .customeraddressId,
+                                                        ParamType.int,
+                                                      ),
+                                                      'useContract':
+                                                          serializeParam(
+                                                        widget!.useContract,
+                                                        ParamType.bool,
+                                                      ),
+                                                      'contractId':
+                                                          serializeParam(
+                                                        widget!.contractId,
+                                                        ParamType.int,
+                                                      ),
+                                                    }.withoutNulls,
                                                     extra: <String, dynamic>{
                                                       kTransitionInfoKey:
                                                           TransitionInfo(
@@ -2212,7 +1776,7 @@ class _BookingForm2WidgetState extends State<BookingForm2Widget> {
                                           AlignmentDirectional(-1.0, 0.0),
                                       child: Padding(
                                         padding: EdgeInsetsDirectional.fromSTEB(
-                                            16.0, 32.0, 0.0, 0.0),
+                                            0.0, 32.0, 0.0, 0.0),
                                         child: Text(
                                           'Order Summary',
                                           style: FlutterFlowTheme.of(context)
@@ -2228,201 +1792,418 @@ class _BookingForm2WidgetState extends State<BookingForm2Widget> {
                                     ),
                                     Padding(
                                       padding: EdgeInsetsDirectional.fromSTEB(
-                                          16.0, 24.0, 16.0, 0.0),
-                                      child: Container(
-                                        width: double.infinity,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(5.0),
-                                          border: Border.all(
-                                            color: Color(0xFFC2C2C2),
-                                          ),
-                                        ),
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.max,
-                                          children: [
-                                            Container(
-                                              width: MediaQuery.sizeOf(context)
-                                                      .width *
-                                                  1.0,
-                                              constraints: BoxConstraints(
-                                                minHeight: 80.0,
-                                              ),
-                                              decoration: BoxDecoration(),
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.max,
-                                                children: [
-                                                  Align(
-                                                    alignment:
-                                                        AlignmentDirectional(
-                                                            -1.0, 0.0),
-                                                    child: Padding(
-                                                      padding:
-                                                          EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                                  16.0,
-                                                                  16.0,
-                                                                  0.0,
-                                                                  0.0),
-                                                      child: Text(
-                                                        'General Servicing',
-                                                        style: FlutterFlowTheme
-                                                                .of(context)
-                                                            .bodyMedium
-                                                            .override(
-                                                              fontFamily:
-                                                                  'Montserrat',
-                                                              fontSize: 16.0,
-                                                              letterSpacing:
-                                                                  0.0,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
-                                                            ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Align(
-                                                    alignment:
-                                                        AlignmentDirectional(
-                                                            -1.0, 0.0),
-                                                    child: Padding(
-                                                      padding:
-                                                          EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                                  16.0,
-                                                                  0.0,
-                                                                  0.0,
-                                                                  0.0),
-                                                      child: Text(
-                                                        'One time Service',
-                                                        style:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .labelSmall
-                                                                .override(
-                                                                  fontFamily:
-                                                                      'Montserrat',
-                                                                  color: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .primaryText,
-                                                                  fontSize:
-                                                                      16.0,
-                                                                  letterSpacing:
-                                                                      0.0,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        EdgeInsetsDirectional
-                                                            .fromSTEB(16.0, 6.0,
-                                                                16.0, 12.0),
-                                                    child: Row(
-                                                      mainAxisSize:
-                                                          MainAxisSize.max,
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        Text(
-                                                          '1x Service Item @ \$1',
-                                                          style: FlutterFlowTheme
-                                                                  .of(context)
-                                                              .bodySmall
-                                                              .override(
-                                                                fontFamily:
-                                                                    'Montserrat',
-                                                                color: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .primaryText,
-                                                                fontSize: 12.0,
-                                                                letterSpacing:
-                                                                    0.0,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w300,
-                                                              ),
-                                                        ),
-                                                        Text(
-                                                          '\$50.00',
-                                                          textAlign:
-                                                              TextAlign.end,
-                                                          style: FlutterFlowTheme
-                                                                  .of(context)
-                                                              .labelMedium
-                                                              .override(
-                                                                fontFamily:
-                                                                    'Montserrat',
-                                                                color: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .primaryText,
-                                                                fontSize: 18.0,
-                                                                letterSpacing:
-                                                                    0.0,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                              ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            Container(
-                                              width: double.infinity,
-                                              height: 2.0,
-                                              decoration: BoxDecoration(
-                                                color: Color(0xFFC2C2C2),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          16.0, 0.0, 16.0, 0.0),
+                                          0.0, 16.0, 0.0, 0.0),
                                       child: SafeArea(
                                         child: Container(
                                           width: double.infinity,
                                           decoration: BoxDecoration(
                                             borderRadius:
                                                 BorderRadius.circular(5.0),
-                                            border: Border.all(
-                                              color: Color(0xFFC2C2C2),
-                                            ),
                                           ),
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.max,
-                                            children: [
-                                              Padding(
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
-                                                        16.0, 16.0, 16.0, 0.0),
-                                                child: Row(
+                                          child: Container(
+                                            width: double.infinity,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(5.0),
+                                              border: Border.all(
+                                                color: Color(0xFFC2C2C2),
+                                              ),
+                                            ),
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.max,
+                                              children: [
+                                                Builder(
+                                                  builder: (context) {
+                                                    final items = FFAppState()
+                                                        .cart
+                                                        .map((e) => e)
+                                                        .toList();
+
+                                                    return Column(
+                                                      mainAxisSize:
+                                                          MainAxisSize.max,
+                                                      children: List.generate(
+                                                          items.length,
+                                                          (itemsIndex) {
+                                                        final itemsItem =
+                                                            items[itemsIndex];
+                                                        return FutureBuilder<
+                                                            List<
+                                                                ServiceitemsRow>>(
+                                                          future:
+                                                              ServiceitemsTable()
+                                                                  .querySingleRow(
+                                                            queryFn: (q) =>
+                                                                q.eq(
+                                                              'id',
+                                                              itemsItem
+                                                                  .serviceitemId,
+                                                            ),
+                                                          ),
+                                                          builder: (context,
+                                                              snapshot) {
+                                                            // Customize what your widget looks like when it's loading.
+                                                            if (!snapshot
+                                                                .hasData) {
+                                                              return Center(
+                                                                child: SizedBox(
+                                                                  width: 88.0,
+                                                                  height: 88.0,
+                                                                  child:
+                                                                      SpinKitRipple(
+                                                                    color: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .tertiary,
+                                                                    size: 88.0,
+                                                                  ),
+                                                                ),
+                                                              );
+                                                            }
+                                                            List<ServiceitemsRow>
+                                                                itemDetailServiceitemsRowList =
+                                                                snapshot.data!;
+
+                                                            final itemDetailServiceitemsRow =
+                                                                itemDetailServiceitemsRowList
+                                                                        .isNotEmpty
+                                                                    ? itemDetailServiceitemsRowList
+                                                                        .first
+                                                                    : null;
+
+                                                            return Container(
+                                                              width: MediaQuery
+                                                                          .sizeOf(
+                                                                              context)
+                                                                      .width *
+                                                                  1.0,
+                                                              constraints:
+                                                                  BoxConstraints(
+                                                                minHeight: 80.0,
+                                                              ),
+                                                              decoration:
+                                                                  BoxDecoration(),
+                                                              child: Column(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .max,
+                                                                children: [
+                                                                  Align(
+                                                                    alignment:
+                                                                        AlignmentDirectional(
+                                                                            -1.0,
+                                                                            0.0),
+                                                                    child:
+                                                                        Padding(
+                                                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                                                          16.0,
+                                                                          16.0,
+                                                                          0.0,
+                                                                          0.0),
+                                                                      child: FutureBuilder<
+                                                                          List<
+                                                                              ServicesRow>>(
+                                                                        future:
+                                                                            ServicesTable().querySingleRow(
+                                                                          queryFn: (q) =>
+                                                                              q.eq(
+                                                                            'id',
+                                                                            itemDetailServiceitemsRow?.serviceId,
+                                                                          ),
+                                                                        ),
+                                                                        builder:
+                                                                            (context,
+                                                                                snapshot) {
+                                                                          // Customize what your widget looks like when it's loading.
+                                                                          if (!snapshot
+                                                                              .hasData) {
+                                                                            return Center(
+                                                                              child: SizedBox(
+                                                                                width: 88.0,
+                                                                                height: 88.0,
+                                                                                child: SpinKitRipple(
+                                                                                  color: FlutterFlowTheme.of(context).tertiary,
+                                                                                  size: 88.0,
+                                                                                ),
+                                                                              ),
+                                                                            );
+                                                                          }
+                                                                          List<ServicesRow>
+                                                                              textServicesRowList =
+                                                                              snapshot.data!;
+
+                                                                          final textServicesRow = textServicesRowList.isNotEmpty
+                                                                              ? textServicesRowList.first
+                                                                              : null;
+
+                                                                          return Text(
+                                                                            valueOrDefault<String>(
+                                                                              textServicesRow?.name,
+                                                                              'n/a',
+                                                                            ),
+                                                                            style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                  fontFamily: 'Montserrat',
+                                                                                  fontSize: 16.0,
+                                                                                  letterSpacing: 0.0,
+                                                                                  fontWeight: FontWeight.w600,
+                                                                                ),
+                                                                          );
+                                                                        },
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  Align(
+                                                                    alignment:
+                                                                        AlignmentDirectional(
+                                                                            -1.0,
+                                                                            0.0),
+                                                                    child:
+                                                                        Padding(
+                                                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                                                          16.0,
+                                                                          0.0,
+                                                                          0.0,
+                                                                          0.0),
+                                                                      child:
+                                                                          Text(
+                                                                        widget!.useContract
+                                                                            ? 'Contract'
+                                                                            : 'One time Service',
+                                                                        style: FlutterFlowTheme.of(context)
+                                                                            .labelSmall
+                                                                            .override(
+                                                                              fontFamily: 'Montserrat',
+                                                                              color: FlutterFlowTheme.of(context).primaryText,
+                                                                              fontSize: 16.0,
+                                                                              letterSpacing: 0.0,
+                                                                              fontWeight: FontWeight.w500,
+                                                                            ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  Padding(
+                                                                    padding: EdgeInsetsDirectional
+                                                                        .fromSTEB(
+                                                                            16.0,
+                                                                            6.0,
+                                                                            16.0,
+                                                                            12.0),
+                                                                    child: Row(
+                                                                      mainAxisSize:
+                                                                          MainAxisSize
+                                                                              .max,
+                                                                      mainAxisAlignment:
+                                                                          MainAxisAlignment
+                                                                              .spaceBetween,
+                                                                      children: [
+                                                                        if (FFAppState()
+                                                                            .cart
+                                                                            .isNotEmpty)
+                                                                          Text(
+                                                                            valueOrDefault<String>(
+                                                                              '${valueOrDefault<String>(
+                                                                                FFAppState().cart.first.quantity.toString(),
+                                                                                '0',
+                                                                              )}x ${itemDetailServiceitemsRow?.name} @ ${valueOrDefault<String>(
+                                                                                formatNumber(
+                                                                                  itemDetailServiceitemsRow?.price,
+                                                                                  formatType: FormatType.decimal,
+                                                                                  decimalType: DecimalType.automatic,
+                                                                                  currency: '\$',
+                                                                                ),
+                                                                                '0',
+                                                                              )}',
+                                                                              '-',
+                                                                            ),
+                                                                            style: FlutterFlowTheme.of(context).bodySmall.override(
+                                                                                  fontFamily: 'Montserrat',
+                                                                                  color: FlutterFlowTheme.of(context).primaryText,
+                                                                                  fontSize: 12.0,
+                                                                                  letterSpacing: 0.0,
+                                                                                  fontWeight: FontWeight.w300,
+                                                                                ),
+                                                                          ),
+                                                                        Text(
+                                                                          widget!.useContract && (itemDetailServiceitemsRow?.id == 1)
+                                                                              ? '0'
+                                                                              : valueOrDefault<String>(
+                                                                                  formatNumber(
+                                                                                    (itemDetailServiceitemsRow!.price!) *
+                                                                                        valueOrDefault<int>(
+                                                                                          itemsItem.quantity,
+                                                                                          0,
+                                                                                        ),
+                                                                                    formatType: FormatType.decimal,
+                                                                                    decimalType: DecimalType.automatic,
+                                                                                    currency: '\$',
+                                                                                  ),
+                                                                                  '0',
+                                                                                ),
+                                                                          textAlign:
+                                                                              TextAlign.end,
+                                                                          style: FlutterFlowTheme.of(context)
+                                                                              .labelMedium
+                                                                              .override(
+                                                                                fontFamily: 'Montserrat',
+                                                                                color: FlutterFlowTheme.of(context).primaryText,
+                                                                                fontSize: 18.0,
+                                                                                letterSpacing: 0.0,
+                                                                                fontWeight: FontWeight.bold,
+                                                                              ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            );
+                                                          },
+                                                        );
+                                                      }),
+                                                    );
+                                                  },
+                                                ),
+                                                Column(
                                                   mainAxisSize:
                                                       MainAxisSize.max,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
                                                   children: [
-                                                    Align(
-                                                      alignment:
-                                                          AlignmentDirectional(
-                                                              -1.0, 0.0),
-                                                      child: Text(
-                                                        'No Add On',
-                                                        style:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .labelLarge
+                                                    Padding(
+                                                      padding:
+                                                          EdgeInsetsDirectional
+                                                              .fromSTEB(
+                                                                  16.0,
+                                                                  16.0,
+                                                                  16.0,
+                                                                  0.0),
+                                                      child: Row(
+                                                        mainAxisSize:
+                                                            MainAxisSize.max,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Align(
+                                                            alignment:
+                                                                AlignmentDirectional(
+                                                                    -1.0, 0.0),
+                                                            child: Text(
+                                                              'No Add On',
+                                                              style: FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .labelLarge
+                                                                  .override(
+                                                                    fontFamily:
+                                                                        'Montserrat',
+                                                                    color: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .primaryText,
+                                                                    letterSpacing:
+                                                                        0.0,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                  ),
+                                                            ),
+                                                          ),
+                                                          Text(
+                                                            '\$0.00',
+                                                            textAlign:
+                                                                TextAlign.end,
+                                                            style: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .titleMedium
+                                                                .override(
+                                                                  fontFamily:
+                                                                      'Montserrat',
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .primaryText,
+                                                                  letterSpacing:
+                                                                      0.0,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          EdgeInsetsDirectional
+                                                              .fromSTEB(
+                                                                  0.0,
+                                                                  16.0,
+                                                                  0.0,
+                                                                  0.0),
+                                                      child: Container(
+                                                        width: double.infinity,
+                                                        height: 2.0,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color:
+                                                              Color(0xFFC2C2C2),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          EdgeInsetsDirectional
+                                                              .fromSTEB(
+                                                                  16.0,
+                                                                  16.0,
+                                                                  16.0,
+                                                                  0.0),
+                                                      child: Row(
+                                                        mainAxisSize:
+                                                            MainAxisSize.max,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Align(
+                                                            alignment:
+                                                                AlignmentDirectional(
+                                                                    -1.0, 0.0),
+                                                            child: Text(
+                                                              'Subtotal',
+                                                              style: FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .labelLarge
+                                                                  .override(
+                                                                    fontFamily:
+                                                                        'Montserrat',
+                                                                    color: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .primaryText,
+                                                                    letterSpacing:
+                                                                        0.0,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                  ),
+                                                            ),
+                                                          ),
+                                                          Text(
+                                                            valueOrDefault<
+                                                                String>(
+                                                              formatNumber(
+                                                                FFAppState()
+                                                                    .totalCart,
+                                                                formatType:
+                                                                    FormatType
+                                                                        .decimal,
+                                                                decimalType:
+                                                                    DecimalType
+                                                                        .automatic,
+                                                                currency: '\$',
+                                                              ),
+                                                              '0',
+                                                            ),
+                                                            textAlign:
+                                                                TextAlign.end,
+                                                            style: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .titleMedium
                                                                 .override(
                                                                   fontFamily:
                                                                       'Montserrat',
@@ -2435,277 +2216,166 @@ class _BookingForm2WidgetState extends State<BookingForm2Widget> {
                                                                       FontWeight
                                                                           .w500,
                                                                 ),
-                                                      ),
-                                                    ),
-                                                    Text(
-                                                      '\$0.00',
-                                                      textAlign: TextAlign.end,
-                                                      style: FlutterFlowTheme
-                                                              .of(context)
-                                                          .titleMedium
-                                                          .override(
-                                                            fontFamily:
-                                                                'Montserrat',
-                                                            color: FlutterFlowTheme
-                                                                    .of(context)
-                                                                .primaryText,
-                                                            letterSpacing: 0.0,
-                                                            fontWeight:
-                                                                FontWeight.bold,
                                                           ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
-                                                        0.0, 16.0, 0.0, 0.0),
-                                                child: Container(
-                                                  width: double.infinity,
-                                                  height: 2.0,
-                                                  decoration: BoxDecoration(
-                                                    color: Color(0xFFC2C2C2),
-                                                  ),
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
-                                                        16.0, 16.0, 16.0, 0.0),
-                                                child: Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.max,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Align(
-                                                      alignment:
-                                                          AlignmentDirectional(
-                                                              -1.0, 0.0),
-                                                      child: Text(
-                                                        'Subtotal',
-                                                        style:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .labelLarge
-                                                                .override(
-                                                                  fontFamily:
-                                                                      'Montserrat',
-                                                                  color: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .primaryText,
-                                                                  letterSpacing:
-                                                                      0.0,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w600,
-                                                                ),
+                                                        ],
                                                       ),
                                                     ),
-                                                    Text(
-                                                      '\$0.00',
-                                                      textAlign: TextAlign.end,
-                                                      style: FlutterFlowTheme
-                                                              .of(context)
-                                                          .titleMedium
-                                                          .override(
-                                                            fontFamily:
-                                                                'Montserrat',
-                                                            color: FlutterFlowTheme
-                                                                    .of(context)
-                                                                .primaryText,
-                                                            letterSpacing: 0.0,
-                                                            fontWeight:
-                                                                FontWeight.w500,
+                                                    Padding(
+                                                      padding:
+                                                          EdgeInsetsDirectional
+                                                              .fromSTEB(
+                                                                  16.0,
+                                                                  16.0,
+                                                                  16.0,
+                                                                  0.0),
+                                                      child: Row(
+                                                        mainAxisSize:
+                                                            MainAxisSize.max,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Align(
+                                                            alignment:
+                                                                AlignmentDirectional(
+                                                                    -1.0, 0.0),
+                                                            child: Text(
+                                                              'Estimated Total',
+                                                              style: FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .labelLarge
+                                                                  .override(
+                                                                    fontFamily:
+                                                                        'Montserrat',
+                                                                    color: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .primaryText,
+                                                                    letterSpacing:
+                                                                        0.0,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                  ),
+                                                            ),
                                                           ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
-                                                        16.0, 16.0, 16.0, 0.0),
-                                                child: Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.max,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Align(
-                                                      alignment:
-                                                          AlignmentDirectional(
-                                                              -1.0, 0.0),
-                                                      child: Text(
-                                                        'Estimated Total',
-                                                        style:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .labelLarge
-                                                                .override(
-                                                                  fontFamily:
-                                                                      'Montserrat',
-                                                                  color: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .primaryText,
-                                                                  letterSpacing:
-                                                                      0.0,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w600,
-                                                                ),
-                                                      ),
-                                                    ),
-                                                    Text(
-                                                      '\$0.00',
-                                                      textAlign: TextAlign.end,
-                                                      style: FlutterFlowTheme
-                                                              .of(context)
-                                                          .titleMedium
-                                                          .override(
-                                                            fontFamily:
-                                                                'Montserrat',
-                                                            color: FlutterFlowTheme
+                                                          Text(
+                                                            valueOrDefault<
+                                                                String>(
+                                                              formatNumber(
+                                                                FFAppState()
+                                                                    .totalCart,
+                                                                formatType:
+                                                                    FormatType
+                                                                        .decimal,
+                                                                decimalType:
+                                                                    DecimalType
+                                                                        .automatic,
+                                                                currency: '\$',
+                                                              ),
+                                                              '0',
+                                                            ),
+                                                            textAlign:
+                                                                TextAlign.end,
+                                                            style: FlutterFlowTheme
                                                                     .of(context)
-                                                                .primaryText,
-                                                            letterSpacing: 0.0,
-                                                            fontWeight:
-                                                                FontWeight.bold,
+                                                                .titleMedium
+                                                                .override(
+                                                                  fontFamily:
+                                                                      'Montserrat',
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .primaryText,
+                                                                  letterSpacing:
+                                                                      0.0,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                ),
                                                           ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
-                                                        0.0, 16.0, 0.0, 0.0),
-                                                child: Container(
-                                                  width: double.infinity,
-                                                  height: 2.0,
-                                                  decoration: BoxDecoration(
-                                                    color: FlutterFlowTheme.of(
-                                                            context)
-                                                        .primaryText,
-                                                  ),
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
-                                                        16.0, 16.0, 16.0, 16.0),
-                                                child: Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.max,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Align(
-                                                      alignment:
-                                                          AlignmentDirectional(
-                                                              -1.0, 0.0),
-                                                      child: Text(
-                                                        'Estimated service & travel time',
-                                                        style:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .labelSmall
-                                                                .override(
-                                                                  fontFamily:
-                                                                      'Montserrat',
-                                                                  color: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .primaryText,
-                                                                  letterSpacing:
-                                                                      0.0,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .normal,
-                                                                ),
+                                                        ],
                                                       ),
                                                     ),
-                                                    Align(
-                                                      alignment:
-                                                          AlignmentDirectional(
-                                                              1.0, 0.0),
-                                                      child: Text(
-                                                        '-',
-                                                        style:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .labelSmall
-                                                                .override(
-                                                                  fontFamily:
-                                                                      'Montserrat',
-                                                                  letterSpacing:
-                                                                      0.0,
-                                                                ),
+                                                    Padding(
+                                                      padding:
+                                                          EdgeInsetsDirectional
+                                                              .fromSTEB(
+                                                                  0.0,
+                                                                  16.0,
+                                                                  0.0,
+                                                                  0.0),
+                                                      child: Container(
+                                                        width: double.infinity,
+                                                        height: 2.0,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .primaryText,
+                                                        ),
                                                       ),
                                                     ),
-                                                  ],
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
-                                                        16.0, 0.0, 16.0, 16.0),
-                                                child: Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.max,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Align(
-                                                      alignment:
-                                                          AlignmentDirectional(
-                                                              -1.0, 0.0),
-                                                      child: Text(
-                                                        'Selected date & time',
-                                                        style:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .labelSmall
-                                                                .override(
-                                                                  fontFamily:
-                                                                      'Montserrat',
-                                                                  color: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .primaryText,
-                                                                  letterSpacing:
-                                                                      0.0,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .normal,
-                                                                ),
-                                                      ),
-                                                    ),
-                                                    Align(
-                                                      alignment:
-                                                          AlignmentDirectional(
-                                                              1.0, 0.0),
-                                                      child: Text(
-                                                        '-',
-                                                        style:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .labelSmall
-                                                                .override(
-                                                                  fontFamily:
-                                                                      'Montserrat',
-                                                                  letterSpacing:
-                                                                      0.0,
-                                                                ),
+                                                    Padding(
+                                                      padding:
+                                                          EdgeInsetsDirectional
+                                                              .fromSTEB(
+                                                                  16.0,
+                                                                  16.0,
+                                                                  16.0,
+                                                                  16.0),
+                                                      child: Row(
+                                                        mainAxisSize:
+                                                            MainAxisSize.max,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Align(
+                                                            alignment:
+                                                                AlignmentDirectional(
+                                                                    -1.0, 0.0),
+                                                            child: Text(
+                                                              'Selected date & time',
+                                                              style: FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .labelSmall
+                                                                  .override(
+                                                                    fontFamily:
+                                                                        'Montserrat',
+                                                                    color: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .primaryText,
+                                                                    letterSpacing:
+                                                                        0.0,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .normal,
+                                                                  ),
+                                                            ),
+                                                          ),
+                                                          Align(
+                                                            alignment:
+                                                                AlignmentDirectional(
+                                                                    1.0, 0.0),
+                                                            child: Text(
+                                                              '-',
+                                                              style: FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .labelSmall
+                                                                  .override(
+                                                                    fontFamily:
+                                                                        'Montserrat',
+                                                                    letterSpacing:
+                                                                        0.0,
+                                                                  ),
+                                                            ),
+                                                          ),
+                                                        ],
                                                       ),
                                                     ),
                                                   ],
                                                 ),
-                                              ),
-                                            ],
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ),

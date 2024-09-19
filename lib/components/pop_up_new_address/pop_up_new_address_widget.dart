@@ -1,8 +1,13 @@
+import '/backend/api_requests/api_calls.dart';
 import '/backend/supabase/supabase.dart';
+import '/flutter_flow/flutter_flow_drop_down.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
+import '/flutter_flow/form_field_controller.dart';
+import 'dart:async';
+import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -40,10 +45,8 @@ class _PopUpNewAddressWidgetState extends State<PopUpNewAddressWidget> {
     _model.namepostalcodeTextController ??= TextEditingController();
     _model.namepostalcodeFocusNode ??= FocusNode();
 
-    _model.addressTextController ??= TextEditingController();
-    _model.addressFocusNode ??= FocusNode();
-
-    _model.postalcodeTextController ??= TextEditingController();
+    _model.postalcodeTextController ??=
+        TextEditingController(text: FFAppState().postalCode);
     _model.postalcodeFocusNode ??= FocusNode();
 
     _model.unitlevelTextController ??= TextEditingController();
@@ -52,7 +55,7 @@ class _PopUpNewAddressWidgetState extends State<PopUpNewAddressWidget> {
     _model.unitumberTextController ??= TextEditingController();
     _model.unitumberFocusNode ??= FocusNode();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override
@@ -64,6 +67,8 @@ class _PopUpNewAddressWidgetState extends State<PopUpNewAddressWidget> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<FFAppState>();
+
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -177,7 +182,7 @@ class _PopUpNewAddressWidgetState extends State<PopUpNewAddressWidget> {
                                       )
                                     ],
                                     style: FlutterFlowTheme.of(context)
-                                        .bodySmall
+                                        .bodyMedium
                                         .override(
                                           fontFamily: 'Montserrat',
                                           letterSpacing: 0.0,
@@ -192,12 +197,22 @@ class _PopUpNewAddressWidgetState extends State<PopUpNewAddressWidget> {
                               child: TextFormField(
                                 controller: _model.namepostalcodeTextController,
                                 focusNode: _model.namepostalcodeFocusNode,
+                                onChanged: (_) => EasyDebounce.debounce(
+                                  '_model.namepostalcodeTextController',
+                                  Duration(milliseconds: 2000),
+                                  () async {
+                                    safeSetState(() =>
+                                        _model.apiRequestCompleter = null);
+                                    await _model.waitForApiRequestCompleted();
+                                  },
+                                ),
                                 obscureText: false,
                                 decoration: InputDecoration(
                                   labelStyle: FlutterFlowTheme.of(context)
                                       .labelSmall
                                       .override(
                                         fontFamily: 'Montserrat',
+                                        fontSize: 14.0,
                                         letterSpacing: 0.0,
                                       ),
                                   alignLabelWithHint: false,
@@ -205,7 +220,7 @@ class _PopUpNewAddressWidgetState extends State<PopUpNewAddressWidget> {
                                       .bodySmall
                                       .override(
                                         fontFamily: 'Montserrat',
-                                        fontSize: 10.0,
+                                        fontSize: 14.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w200,
                                       ),
@@ -285,7 +300,7 @@ class _PopUpNewAddressWidgetState extends State<PopUpNewAddressWidget> {
                                       )
                                     ],
                                     style: FlutterFlowTheme.of(context)
-                                        .bodySmall
+                                        .bodyMedium
                                         .override(
                                           fontFamily: 'Montserrat',
                                           letterSpacing: 0.0,
@@ -296,68 +311,124 @@ class _PopUpNewAddressWidgetState extends State<PopUpNewAddressWidget> {
                             ),
                             Padding(
                               padding: EdgeInsetsDirectional.fromSTEB(
-                                  16.0, 16.0, 16.0, 0.0),
-                              child: TextFormField(
-                                controller: _model.addressTextController,
-                                focusNode: _model.addressFocusNode,
-                                obscureText: false,
-                                decoration: InputDecoration(
-                                  labelStyle: FlutterFlowTheme.of(context)
-                                      .labelSmall
-                                      .override(
-                                        fontFamily: 'Montserrat',
-                                        letterSpacing: 0.0,
+                                  16.0, 12.0, 16.0, 0.0),
+                              child: FutureBuilder<ApiCallResponse>(
+                                future: (_model.apiRequestCompleter ??=
+                                        Completer<ApiCallResponse>()
+                                          ..complete(SearchAddressCall.call(
+                                            keyword: valueOrDefault<String>(
+                                              _model
+                                                  .namepostalcodeTextController
+                                                  .text,
+                                              'JALAN',
+                                            ),
+                                          )))
+                                    .future,
+                                builder: (context, snapshot) {
+                                  // Customize what your widget looks like when it's loading.
+                                  if (!snapshot.hasData) {
+                                    return Center(
+                                      child: SizedBox(
+                                        width: 88.0,
+                                        height: 88.0,
+                                        child: SpinKitRipple(
+                                          color: FlutterFlowTheme.of(context)
+                                              .tertiary,
+                                          size: 88.0,
+                                        ),
                                       ),
-                                  alignLabelWithHint: false,
-                                  hintStyle: FlutterFlowTheme.of(context)
-                                      .bodySmall
-                                      .override(
-                                        fontFamily: 'Montserrat',
-                                        fontSize: 10.0,
-                                        letterSpacing: 0.0,
-                                        fontWeight: FontWeight.w200,
-                                      ),
-                                  enabledBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Color(0x00000000),
-                                      width: 1.0,
+                                    );
+                                  }
+                                  final dropDownSearchAddressResponse =
+                                      snapshot.data!;
+
+                                  return FlutterFlowDropDown<String>(
+                                    controller:
+                                        _model.dropDownValueController ??=
+                                            FormFieldController<String>(null),
+                                    options: (getJsonField(
+                                      dropDownSearchAddressResponse.jsonBody,
+                                      r'''$.results[:].ADDRESS''',
+                                      true,
+                                    ) as List)
+                                        .map<String>((s) => s.toString())
+                                        .toList()!,
+                                    onChanged: (val) async {
+                                      safeSetState(
+                                          () => _model.dropDownValue = val);
+                                      _model.apiResult4tm =
+                                          await SearchAddressCall.call(
+                                        keyword: _model.dropDownValue,
+                                      );
+
+                                      if ((_model.apiResult4tm?.succeeded ??
+                                          true)) {
+                                        await showDialog(
+                                          context: context,
+                                          builder: (alertDialogContext) {
+                                            return AlertDialog(
+                                              title: Text('Address Found'),
+                                              content: Text(
+                                                  '${_model.dropDownValue} - ${SearchAddressCall.postalCode(
+                                                (_model.apiResult4tm
+                                                        ?.jsonBody ??
+                                                    ''),
+                                              )}'),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () =>
+                                                      Navigator.pop(
+                                                          alertDialogContext),
+                                                  child: Text('Ok'),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                        _model.postal =
+                                            SearchAddressCall.postalCode(
+                                          (_model.apiResult4tm?.jsonBody ?? ''),
+                                        );
+                                        safeSetState(() {});
+                                        FFAppState().postalCode =
+                                            SearchAddressCall.postalCode(
+                                          (_model.apiResult4tm?.jsonBody ?? ''),
+                                        )!;
+                                        safeSetState(() {});
+                                      }
+
+                                      safeSetState(() {});
+                                    },
+                                    width:
+                                        MediaQuery.sizeOf(context).width * 1.0,
+                                    height: 56.0,
+                                    textStyle: FlutterFlowTheme.of(context)
+                                        .bodyMedium
+                                        .override(
+                                          fontFamily: 'Montserrat',
+                                          letterSpacing: 0.0,
+                                        ),
+                                    hintText: 'Please select...',
+                                    icon: Icon(
+                                      Icons.keyboard_arrow_down_rounded,
+                                      color: FlutterFlowTheme.of(context)
+                                          .secondaryText,
+                                      size: 24.0,
                                     ),
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                  focusedBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Color(0xFF0089C4),
-                                      width: 1.0,
-                                    ),
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                  errorBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: FlutterFlowTheme.of(context).error,
-                                      width: 1.0,
-                                    ),
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                  focusedErrorBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: FlutterFlowTheme.of(context).error,
-                                      width: 1.0,
-                                    ),
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                  filled: true,
-                                  contentPadding:
-                                      EdgeInsetsDirectional.fromSTEB(
-                                          10.0, 12.0, 10.0, 12.0),
-                                ),
-                                style: FlutterFlowTheme.of(context)
-                                    .bodyMedium
-                                    .override(
-                                      fontFamily: 'Montserrat',
-                                      letterSpacing: 0.0,
-                                    ),
-                                validator: _model.addressTextControllerValidator
-                                    .asValidator(context),
+                                    fillColor: FlutterFlowTheme.of(context)
+                                        .secondaryBackground,
+                                    elevation: 2.0,
+                                    borderColor: Colors.transparent,
+                                    borderWidth: 2.0,
+                                    borderRadius: 8.0,
+                                    margin: EdgeInsetsDirectional.fromSTEB(
+                                        16.0, 4.0, 16.0, 4.0),
+                                    hidesUnderline: true,
+                                    isOverButton: true,
+                                    isSearchable: false,
+                                    isMultiSelect: false,
+                                  );
+                                },
                               ),
                             ),
                             Align(
@@ -392,7 +463,7 @@ class _PopUpNewAddressWidgetState extends State<PopUpNewAddressWidget> {
                                       )
                                     ],
                                     style: FlutterFlowTheme.of(context)
-                                        .bodySmall
+                                        .bodyMedium
                                         .override(
                                           fontFamily: 'Montserrat',
                                           letterSpacing: 0.0,
@@ -413,16 +484,16 @@ class _PopUpNewAddressWidgetState extends State<PopUpNewAddressWidget> {
                                       .labelSmall
                                       .override(
                                         fontFamily: 'Montserrat',
+                                        fontSize: 14.0,
                                         letterSpacing: 0.0,
                                       ),
                                   alignLabelWithHint: false,
+                                  hintText: FFAppState().postalCode,
                                   hintStyle: FlutterFlowTheme.of(context)
-                                      .bodySmall
+                                      .bodyMedium
                                       .override(
                                         fontFamily: 'Montserrat',
-                                        fontSize: 10.0,
                                         letterSpacing: 0.0,
-                                        fontWeight: FontWeight.w200,
                                       ),
                                   enabledBorder: UnderlineInputBorder(
                                     borderSide: BorderSide(
@@ -476,7 +547,7 @@ class _PopUpNewAddressWidgetState extends State<PopUpNewAddressWidget> {
                                 child: Text(
                                   'Unit Level',
                                   style: FlutterFlowTheme.of(context)
-                                      .bodySmall
+                                      .bodyMedium
                                       .override(
                                         fontFamily: 'Montserrat',
                                         letterSpacing: 0.0,
@@ -496,6 +567,7 @@ class _PopUpNewAddressWidgetState extends State<PopUpNewAddressWidget> {
                                       .labelSmall
                                       .override(
                                         fontFamily: 'Montserrat',
+                                        fontSize: 14.0,
                                         letterSpacing: 0.0,
                                       ),
                                   alignLabelWithHint: false,
@@ -503,7 +575,7 @@ class _PopUpNewAddressWidgetState extends State<PopUpNewAddressWidget> {
                                       .bodySmall
                                       .override(
                                         fontFamily: 'Montserrat',
-                                        fontSize: 10.0,
+                                        fontSize: 14.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w200,
                                       ),
@@ -575,7 +647,7 @@ class _PopUpNewAddressWidgetState extends State<PopUpNewAddressWidget> {
                                       )
                                     ],
                                     style: FlutterFlowTheme.of(context)
-                                        .bodySmall
+                                        .bodyMedium
                                         .override(
                                           fontFamily: 'Montserrat',
                                           letterSpacing: 0.0,
@@ -596,6 +668,7 @@ class _PopUpNewAddressWidgetState extends State<PopUpNewAddressWidget> {
                                       .labelSmall
                                       .override(
                                         fontFamily: 'Montserrat',
+                                        fontSize: 14.0,
                                         letterSpacing: 0.0,
                                       ),
                                   alignLabelWithHint: false,
@@ -603,7 +676,7 @@ class _PopUpNewAddressWidgetState extends State<PopUpNewAddressWidget> {
                                       .bodySmall
                                       .override(
                                         fontFamily: 'Montserrat',
-                                        fontSize: 10.0,
+                                        fontSize: 14.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w200,
                                       ),
@@ -664,13 +737,12 @@ class _PopUpNewAddressWidgetState extends State<PopUpNewAddressWidget> {
                                       return;
                                     }
                                     await CustomeraddressesTable().insert({
-                                      'name': _model.addressTextController.text,
+                                      'name': _model.dropDownValue,
                                       'unit_level':
                                           _model.unitlevelTextController.text,
                                       'unit_number':
                                           _model.unitumberTextController.text,
-                                      'postcode':
-                                          _model.postalcodeTextController.text,
+                                      'postcode': FFAppState().postalCode,
                                       'customer_id': widget!.customerid,
                                     });
                                     ScaffoldMessenger.of(context).showSnackBar(
@@ -690,7 +762,7 @@ class _PopUpNewAddressWidgetState extends State<PopUpNewAddressWidget> {
                                     );
 
                                     context.goNamed(
-                                      'ProfilesCopy',
+                                      'Profile',
                                       queryParameters: {
                                         'devmode': serializeParam(
                                           false,

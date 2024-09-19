@@ -31,7 +31,7 @@ class _BookingDetailWidgetState extends State<BookingDetailWidget> {
     super.initState();
     _model = createModel(context, () => BookingDetailModel());
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override
@@ -52,7 +52,7 @@ class _BookingDetailWidgetState extends State<BookingDetailWidget> {
           top: true,
           child: wrapWithModel(
             model: _model.popUpDetailModel,
-            updateCallback: () => setState(() {}),
+            updateCallback: () => safeSetState(() {}),
             child: PopUpDetailWidget(
               orderId: widget!.orderId!,
             ),

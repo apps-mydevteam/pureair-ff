@@ -21,6 +21,7 @@ export 'tables/employees.dart';
 export 'tables/holidays.dart';
 export 'tables/promos.dart';
 export 'tables/regions.dart';
+export 'tables/customers_backup.dart';
 export 'tables/services.dart';
 export 'tables/servicecontracts.dart';
 export 'tables/reviews.dart';

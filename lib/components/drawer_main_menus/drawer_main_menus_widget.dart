@@ -1,4 +1,5 @@
 import '/auth/firebase_auth/auth_util.dart';
+import '/components/yearly_contract_details/yearly_contract_details_widget.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -35,7 +36,7 @@ class _DrawerMainMenusWidgetState extends State<DrawerMainMenusWidget> {
     super.initState();
     _model = createModel(context, () => DrawerMainMenusModel());
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override
@@ -153,7 +154,7 @@ class _DrawerMainMenusWidgetState extends State<DrawerMainMenusWidget> {
                 highlightColor: Colors.transparent,
                 onTap: () async {
                   context.pushNamed(
-                    'HomePageCopy',
+                    'HomePage',
                     queryParameters: {
                       'devmode': serializeParam(
                         false,
@@ -185,24 +186,55 @@ class _DrawerMainMenusWidgetState extends State<DrawerMainMenusWidget> {
                   ),
                 ),
               ),
-              Container(
-                width: MediaQuery.sizeOf(context).width * 1.0,
-                height: 48.0,
-                decoration: BoxDecoration(
-                  color: FlutterFlowTheme.of(context).secondaryBackground,
-                ),
-                child: Align(
-                  alignment: AlignmentDirectional(-1.0, 0.0),
-                  child: Padding(
-                    padding:
-                        EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 0.0, 0.0),
-                    child: Text(
-                      'Contract Equiry',
-                      style: FlutterFlowTheme.of(context).bodyMedium.override(
-                            fontFamily: 'Montserrat',
-                            color: FlutterFlowTheme.of(context).primary,
-                            letterSpacing: 0.0,
+              Builder(
+                builder: (context) => InkWell(
+                  splashColor: Colors.transparent,
+                  focusColor: Colors.transparent,
+                  hoverColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  onTap: () async {
+                    Navigator.pop(context);
+                    await showDialog(
+                      context: context,
+                      builder: (dialogContext) {
+                        return Dialog(
+                          elevation: 0,
+                          insetPadding: EdgeInsets.zero,
+                          backgroundColor: Colors.transparent,
+                          alignment: AlignmentDirectional(0.0, 0.0)
+                              .resolve(Directionality.of(context)),
+                          child: Container(
+                            height: MediaQuery.sizeOf(context).height * 0.8,
+                            width: MediaQuery.sizeOf(context).width * 0.9,
+                            child: YearlyContractDetailsWidget(
+                              profileId: currentUserUid,
+                            ),
                           ),
+                        );
+                      },
+                    );
+                  },
+                  child: Container(
+                    width: MediaQuery.sizeOf(context).width * 1.0,
+                    height: 48.0,
+                    decoration: BoxDecoration(
+                      color: FlutterFlowTheme.of(context).secondaryBackground,
+                    ),
+                    child: Align(
+                      alignment: AlignmentDirectional(-1.0, 0.0),
+                      child: Padding(
+                        padding:
+                            EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 0.0, 0.0),
+                        child: Text(
+                          'Contract Enquiry',
+                          style:
+                              FlutterFlowTheme.of(context).bodyMedium.override(
+                                    fontFamily: 'Montserrat',
+                                    color: FlutterFlowTheme.of(context).primary,
+                                    letterSpacing: 0.0,
+                                  ),
+                        ),
+                      ),
                     ),
                   ),
                 ),

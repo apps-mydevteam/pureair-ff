@@ -3,6 +3,7 @@ import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
+import '/flutter_flow/custom_functions.dart' as functions;
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -36,7 +37,7 @@ class _PopUpDetailWidgetState extends State<PopUpDetailWidget> {
     super.initState();
     _model = createModel(context, () => PopUpDetailModel());
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override
@@ -251,12 +252,11 @@ class _PopUpDetailWidgetState extends State<PopUpDetailWidget> {
                                   child: Text(
                                     'Address',
                                     style: FlutterFlowTheme.of(context)
-                                        .labelSmall
+                                        .labelMedium
                                         .override(
                                           fontFamily: 'Montserrat',
                                           color: FlutterFlowTheme.of(context)
                                               .primaryText,
-                                          fontSize: 14.0,
                                           letterSpacing: 0.0,
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -340,6 +340,44 @@ class _PopUpDetailWidgetState extends State<PopUpDetailWidget> {
                                 Align(
                                   alignment: AlignmentDirectional(-1.0, 0.0),
                                   child: Text(
+                                    'Preferred Slot',
+                                    style: FlutterFlowTheme.of(context)
+                                        .labelSmall
+                                        .override(
+                                          fontFamily: 'Montserrat',
+                                          color: FlutterFlowTheme.of(context)
+                                              .primaryText,
+                                          fontSize: 14.0,
+                                          letterSpacing: 0.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                  ),
+                                ),
+                                Text(
+                                  '${dateTimeFormat("d/M/y", containerOrdersRow?.preferredTimeslot)} ${dateTimeFormat("EEEE", containerOrdersRow?.preferredTimeslot)}, ${dateTimeFormat("jm", functions.converttoSG(containerOrdersRow!.preferredTimeslot!))}',
+                                  textAlign: TextAlign.end,
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodySmall
+                                      .override(
+                                        fontFamily: 'Montserrat',
+                                        fontSize: 14.0,
+                                        letterSpacing: 0.0,
+                                        fontWeight: FontWeight.normal,
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsetsDirectional.fromSTEB(
+                                16.0, 16.0, 16.0, 0.0),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Align(
+                                  alignment: AlignmentDirectional(-1.0, 0.0),
+                                  child: Text(
                                     'Selected Slot',
                                     style: FlutterFlowTheme.of(context)
                                         .labelSmall
@@ -354,7 +392,11 @@ class _PopUpDetailWidgetState extends State<PopUpDetailWidget> {
                                   ),
                                 ),
                                 Text(
-                                  '${dateTimeFormat("d/M/y", containerOrdersRow?.scheduledTimeslot)} ${dateTimeFormat("EEEE", containerOrdersRow?.scheduledTimeslot)}, ${dateTimeFormat("jm", containerOrdersRow?.scheduledTimeslot)}',
+                                  '${dateTimeFormat("d/M/y", containerOrdersRow?.scheduledTimeslot)} ${dateTimeFormat("EEEE", containerOrdersRow?.scheduledTimeslot)}, ${valueOrDefault<String>(
+                                    dateTimeFormat("jm",
+                                        containerOrdersRow?.scheduledTimeslot),
+                                    'not scheduled yet.',
+                                  )}',
                                   textAlign: TextAlign.end,
                                   style: FlutterFlowTheme.of(context)
                                       .bodySmall
@@ -640,7 +682,7 @@ class _PopUpDetailWidgetState extends State<PopUpDetailWidget> {
                           ),
                           Padding(
                             padding: EdgeInsetsDirectional.fromSTEB(
-                                16.0, 0.0, 16.0, 32.0),
+                                16.0, 0.0, 16.0, 24.0),
                             child: Container(
                               width: double.infinity,
                               decoration: BoxDecoration(
@@ -788,7 +830,7 @@ class _PopUpDetailWidgetState extends State<PopUpDetailWidget> {
                               alignment: AlignmentDirectional(-1.0, 0.0),
                               child: Padding(
                                 padding: EdgeInsetsDirectional.fromSTEB(
-                                    16.0, 16.0, 0.0, 0.0),
+                                    16.0, 0.0, 0.0, 0.0),
                                 child: FFButtonWidget(
                                   onPressed: () async {
                                     // Action 2
@@ -848,7 +890,7 @@ class _PopUpDetailWidgetState extends State<PopUpDetailWidget> {
                               alignment: AlignmentDirectional(-1.0, 0.0),
                               child: Padding(
                                 padding: EdgeInsetsDirectional.fromSTEB(
-                                    16.0, 24.0, 0.0, 32.0),
+                                    16.0, 16.0, 0.0, 32.0),
                                 child: FFButtonWidget(
                                   onPressed: () async {
                                     context.pushNamed(
@@ -870,12 +912,11 @@ class _PopUpDetailWidgetState extends State<PopUpDetailWidget> {
                                         0.0, 0.0, 0.0, 0.0),
                                     color: FlutterFlowTheme.of(context).primary,
                                     textStyle: FlutterFlowTheme.of(context)
-                                        .bodySmall
+                                        .bodyMedium
                                         .override(
                                           fontFamily: 'Montserrat',
                                           color:
                                               FlutterFlowTheme.of(context).info,
-                                          fontSize: 14.0,
                                           letterSpacing: 0.0,
                                         ),
                                     elevation: 3.0,

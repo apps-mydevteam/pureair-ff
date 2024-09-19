@@ -50,4 +50,7 @@ class CustomersRow extends SupabaseDataRow {
 
   String? get firebaseUid => getField<String>('firebase_uid');
   set firebaseUid(String? value) => setField<String>('firebase_uid', value);
+
+  int? get tmpOtp => getField<int>('tmp_otp');
+  set tmpOtp(int? value) => setField<int>('tmp_otp', value);
 }

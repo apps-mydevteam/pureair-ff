@@ -1,6 +1,6 @@
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/supabase/supabase.dart';
-import '/flutter_flow/flutter_flow_icon_button.dart';
+import '/components/drawer_main_menus/drawer_main_menus_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -11,9 +11,18 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 class Booking25Model extends FlutterFlowModel<Booking25Widget> {
-  @override
-  void initState(BuildContext context) {}
+  ///  State fields for stateful widgets in this page.
+
+  // Model for DrawerMainMenus component.
+  late DrawerMainMenusModel drawerMainMenusModel;
 
   @override
-  void dispose() {}
+  void initState(BuildContext context) {
+    drawerMainMenusModel = createModel(context, () => DrawerMainMenusModel());
+  }
+
+  @override
+  void dispose() {
+    drawerMainMenusModel.dispose();
+  }
 }

@@ -31,7 +31,7 @@ class _BookingInvoiceWidgetState extends State<BookingInvoiceWidget> {
     super.initState();
     _model = createModel(context, () => BookingInvoiceModel());
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override
@@ -52,7 +52,7 @@ class _BookingInvoiceWidgetState extends State<BookingInvoiceWidget> {
           top: true,
           child: wrapWithModel(
             model: _model.popUpInvoiceModel,
-            updateCallback: () => setState(() {}),
+            updateCallback: () => safeSetState(() {}),
             child: PopUpInvoiceWidget(
               orderId: widget!.orderId!,
             ),

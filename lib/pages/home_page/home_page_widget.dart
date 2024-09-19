@@ -1,16 +1,21 @@
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/supabase/supabase.dart';
 import '/components/drawer_main_menus/drawer_main_menus_widget.dart';
-import '/components/nohistorybookings/nohistorybookings_widget.dart';
 import '/components/nopendingbookings/nopendingbookings_widget.dart';
 import '/components/noupcomingbookings/noupcomingbookings_widget.dart';
+import '/flutter_flow/flutter_flow_animations.dart';
 import '/flutter_flow/flutter_flow_button_tabbar.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
+import 'dart:math';
+import '/flutter_flow/custom_functions.dart' as functions;
+import '/flutter_flow/random_data_util.dart' as random_data;
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -35,17 +40,67 @@ class _HomePageWidgetState extends State<HomePageWidget>
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
+  final animationsMap = <String, AnimationInfo>{};
+
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => HomePageModel());
 
+    // On page load action.
+    SchedulerBinding.instance.addPostFrameCallback((_) async {
+      await CustomersTable().update(
+        data: {
+          'firebase_uid': currentUserUid,
+          'tmp_otp': valueOrDefault<int>(
+            random_data.randomInteger(111111, 999999),
+            112233,
+          ),
+        },
+        matchingRows: (rows) => rows.eq(
+          'phone',
+          (String phone) {
+            return phone.replaceAll('+', '');
+          }(currentPhoneNumber),
+        ),
+      );
+    });
+
     _model.tabBarController = TabController(
       vsync: this,
       length: 3,
       initialIndex: 0,
-    )..addListener(() => setState(() {}));
-    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
+    )..addListener(() => safeSetState(() {}));
+    animationsMap.addAll({
+      'tabBarOnPageLoadAnimation': AnimationInfo(
+        trigger: AnimationTrigger.onPageLoad,
+        effectsBuilder: () => [
+          VisibilityEffect(duration: 200.ms),
+          FadeEffect(
+            curve: Curves.easeInOut,
+            delay: 200.0.ms,
+            duration: 600.0.ms,
+            begin: 0.0,
+            end: 1.0,
+          ),
+          MoveEffect(
+            curve: Curves.easeInOut,
+            delay: 200.0.ms,
+            duration: 600.0.ms,
+            begin: Offset(0.0, 30.0),
+            end: Offset(0.0, 0.0),
+          ),
+        ],
+      ),
+    });
+    setupAnimations(
+      animationsMap.values.where((anim) =>
+          anim.trigger == AnimationTrigger.onActionTrigger ||
+          !anim.applyInitialState),
+      this,
+    );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override
@@ -116,10 +171,8 @@ class _HomePageWidgetState extends State<HomePageWidget>
                 elevation: 16.0,
                 child: wrapWithModel(
                   model: _model.drawerMainMenusModel,
-                  updateCallback: () => setState(() {}),
-                  child: DrawerMainMenusWidget(
-                    parameter1: homePageCustomersRow?.id,
-                  ),
+                  updateCallback: () => safeSetState(() {}),
+                  child: DrawerMainMenusWidget(),
                 ),
               ),
             ),
@@ -175,7 +228,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                     hoverColor: Colors.transparent,
                     highlightColor: Colors.transparent,
                     onTap: () async {
-                      context.pushNamed('ProfilesCopy');
+                      context.pushNamed('Profile');
                     },
                     child: Icon(
                       Icons.person_rounded,
@@ -218,6 +271,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                   .headlineSmall
                                   .override(
                                     fontFamily: 'Montserrat',
+                                    fontSize: 22.0,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -249,7 +303,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                               options: FFButtonOptions(
                                 height: 36.0,
                                 padding: EdgeInsetsDirectional.fromSTEB(
-                                    24.0, 0.0, 24.0, 0.0),
+                                    18.0, 0.0, 18.0, 0.0),
                                 iconPadding: EdgeInsetsDirectional.fromSTEB(
                                     0.0, 0.0, 0.0, 0.0),
                                 color: FlutterFlowTheme.of(context).primary,
@@ -274,7 +328,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                       Expanded(
                         child: Padding(
                           padding: EdgeInsetsDirectional.fromSTEB(
-                              18.0, 32.0, 18.0, 0.0),
+                              0.0, 32.0, 0.0, 0.0),
                           child: Column(
                             children: [
                               Align(
@@ -303,15 +357,20 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                   borderWidth: 0.0,
                                   borderRadius: 5.0,
                                   elevation: 0.0,
+                                  buttonMargin: EdgeInsetsDirectional.fromSTEB(
+                                      20.0, 0.0, 20.0, 0.0),
                                   tabs: [
                                     Tab(
                                       text: 'Upcoming',
+                                      iconMargin: EdgeInsets.all(10.0),
                                     ),
                                     Tab(
                                       text: 'Pending',
+                                      iconMargin: EdgeInsets.all(10.0),
                                     ),
                                     Tab(
                                       text: 'History',
+                                      iconMargin: EdgeInsets.all(10.0),
                                     ),
                                   ],
                                   controller: _model.tabBarController,
@@ -328,524 +387,232 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                 child: TabBarView(
                                   controller: _model.tabBarController,
                                   children: [
-                                    SingleChildScrollView(
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.max,
-                                        children: [
-                                          Align(
-                                            alignment:
-                                                AlignmentDirectional(0.0, -1.0),
-                                            child: Container(
-                                              width: double.infinity,
-                                              height: 2.0,
-                                              constraints: BoxConstraints(
-                                                minWidth: double.infinity,
-                                                maxWidth: double.infinity,
-                                              ),
-                                              decoration: BoxDecoration(
-                                                color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .primary,
-                                              ),
-                                            ),
-                                          ),
-                                          Align(
-                                            alignment:
-                                                AlignmentDirectional(-1.0, 0.0),
-                                            child: Padding(
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(
-                                                      0.0, 24.0, 0.0, 0.0),
-                                              child: Text(
-                                                'Upcoming Bookings',
-                                                style: FlutterFlowTheme.of(
-                                                        context)
-                                                    .titleMedium
-                                                    .override(
-                                                      fontFamily: 'Montserrat',
-                                                      color:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .primaryText,
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
+                                    Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          16.0, 0.0, 16.0, 20.0),
+                                      child: SingleChildScrollView(
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.max,
+                                          children: [
+                                            Align(
+                                              alignment: AlignmentDirectional(
+                                                  0.0, -1.0),
+                                              child: Container(
+                                                width: double.infinity,
+                                                height: 2.0,
+                                                constraints: BoxConstraints(
+                                                  minWidth: double.infinity,
+                                                  maxWidth: double.infinity,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .primary,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          Align(
-                                            alignment:
-                                                AlignmentDirectional(-1.0, 0.0),
-                                            child: Padding(
+                                            Align(
+                                              alignment: AlignmentDirectional(
+                                                  -1.0, 0.0),
+                                              child: Padding(
+                                                padding: EdgeInsetsDirectional
+                                                    .fromSTEB(
+                                                        0.0, 24.0, 0.0, 0.0),
+                                                child: Text(
+                                                  'Upcoming Bookings',
+                                                  style: FlutterFlowTheme.of(
+                                                          context)
+                                                      .titleMedium
+                                                      .override(
+                                                        fontFamily:
+                                                            'Montserrat',
+                                                        color:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .primaryText,
+                                                        letterSpacing: 0.0,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                ),
+                                              ),
+                                            ),
+                                            Align(
+                                              alignment: AlignmentDirectional(
+                                                  -1.0, 0.0),
+                                              child: Padding(
+                                                padding: EdgeInsetsDirectional
+                                                    .fromSTEB(
+                                                        0.0, 8.0, 0.0, 0.0),
+                                                child: Text(
+                                                  'Booking Status: Confirmed',
+                                                  style: FlutterFlowTheme.of(
+                                                          context)
+                                                      .bodyMedium
+                                                      .override(
+                                                        fontFamily:
+                                                            'Montserrat',
+                                                        color:
+                                                            Color(0xFF6B6B6B),
+                                                        letterSpacing: 0.0,
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                        fontStyle:
+                                                            FontStyle.italic,
+                                                      ),
+                                                ),
+                                              ),
+                                            ),
+                                            Padding(
                                               padding: EdgeInsetsDirectional
                                                   .fromSTEB(0.0, 8.0, 0.0, 0.0),
-                                              child: Text(
-                                                'Booking Status: Confirmed',
-                                                style: FlutterFlowTheme.of(
-                                                        context)
-                                                    .bodyMedium
-                                                    .override(
-                                                      fontFamily: 'Montserrat',
-                                                      color: Color(0xFF6B6B6B),
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FontWeight.normal,
-                                                      fontStyle:
-                                                          FontStyle.italic,
-                                                    ),
+                                              child: Container(
+                                                width: double.infinity,
+                                                height: 2.0,
+                                                decoration: BoxDecoration(
+                                                  color: Color(0xFFC2C2C2),
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    0.0, 8.0, 0.0, 0.0),
-                                            child: Container(
-                                              width: double.infinity,
-                                              height: 2.0,
-                                              decoration: BoxDecoration(
-                                                color: Color(0xFFC2C2C2),
-                                              ),
-                                            ),
-                                          ),
-                                          FutureBuilder<List<OrdersRow>>(
-                                            future: (_model
-                                                        .requestCompleter3 ??=
-                                                    Completer<List<OrdersRow>>()
-                                                      ..complete(OrdersTable()
-                                                          .queryRows(
-                                                        queryFn: (q) => q
-                                                            .eq(
-                                                              'deleted',
-                                                              false,
-                                                            )
-                                                            .gte(
-                                                              'scheduled_timeslot',
-                                                              supaSerialize<
-                                                                      DateTime>(
-                                                                  getCurrentTimestamp),
-                                                            )
-                                                            .neq(
-                                                              'status',
-                                                              'pending',
-                                                            )
-                                                            .eq(
-                                                              'customer_id',
-                                                              homePageCustomersRow
-                                                                  ?.id,
-                                                            )
-                                                            .order('date'),
-                                                        limit: 5,
-                                                      )))
-                                                .future,
-                                            builder: (context, snapshot) {
-                                              // Customize what your widget looks like when it's loading.
-                                              if (!snapshot.hasData) {
-                                                return Center(
-                                                  child: SizedBox(
-                                                    width: 88.0,
-                                                    height: 88.0,
-                                                    child: SpinKitRipple(
-                                                      color:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .tertiary,
-                                                      size: 88.0,
+                                            FutureBuilder<List<OrdersRow>>(
+                                              future: (_model
+                                                          .requestCompleter1 ??=
+                                                      Completer<
+                                                          List<OrdersRow>>()
+                                                        ..complete(OrdersTable()
+                                                            .queryRows(
+                                                          queryFn: (q) => q
+                                                              .eq(
+                                                                'deleted',
+                                                                false,
+                                                              )
+                                                              .gte(
+                                                                'scheduled_timeslot',
+                                                                supaSerialize<
+                                                                        DateTime>(
+                                                                    getCurrentTimestamp),
+                                                              )
+                                                              .neq(
+                                                                'status',
+                                                                'cancelled',
+                                                              )
+                                                              .eq(
+                                                                'customer_id',
+                                                                homePageCustomersRow
+                                                                    ?.id,
+                                                              )
+                                                              .order('date'),
+                                                          limit: 5,
+                                                        )))
+                                                  .future,
+                                              builder: (context, snapshot) {
+                                                // Customize what your widget looks like when it's loading.
+                                                if (!snapshot.hasData) {
+                                                  return Center(
+                                                    child: SizedBox(
+                                                      width: 88.0,
+                                                      height: 88.0,
+                                                      child: SpinKitRipple(
+                                                        color:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .tertiary,
+                                                        size: 88.0,
+                                                      ),
                                                     ),
-                                                  ),
-                                                );
-                                              }
-                                              List<OrdersRow>
-                                                  bookListOrdersRowList =
-                                                  snapshot.data!;
+                                                  );
+                                                }
+                                                List<OrdersRow>
+                                                    bookListOrdersRowList =
+                                                    snapshot.data!;
 
-                                              if (bookListOrdersRowList
-                                                  .isEmpty) {
-                                                return Container(
-                                                  width: 320.0,
-                                                  child:
-                                                      NoupcomingbookingsWidget(),
-                                                );
-                                              }
+                                                if (bookListOrdersRowList
+                                                    .isEmpty) {
+                                                  return Container(
+                                                    width: 320.0,
+                                                    child:
+                                                        NoupcomingbookingsWidget(),
+                                                  );
+                                                }
 
-                                              return RefreshIndicator(
-                                                color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .tertiary,
-                                                backgroundColor:
-                                                    FlutterFlowTheme.of(context)
-                                                        .accent1,
-                                                onRefresh: () async {
-                                                  setState(() =>
-                                                      _model.requestCompleter3 =
-                                                          null);
-                                                  await _model
-                                                      .waitForRequestCompleted3();
-                                                },
-                                                child: ListView.builder(
-                                                  padding: EdgeInsets.zero,
-                                                  shrinkWrap: true,
-                                                  scrollDirection:
-                                                      Axis.vertical,
-                                                  itemCount:
-                                                      bookListOrdersRowList
-                                                          .length,
-                                                  itemBuilder:
-                                                      (context, bookListIndex) {
-                                                    final bookListOrdersRow =
-                                                        bookListOrdersRowList[
-                                                            bookListIndex];
-                                                    return Container(
-                                                      width: 100.0,
-                                                      decoration:
-                                                          BoxDecoration(),
-                                                      child:
-                                                          SingleChildScrollView(
-                                                        child: Column(
-                                                          mainAxisSize:
-                                                              MainAxisSize.max,
-                                                          children: [
-                                                            Padding(
-                                                              padding:
-                                                                  EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                          0.0,
-                                                                          24.0,
-                                                                          0.0,
-                                                                          0.0),
-                                                              child: Row(
-                                                                mainAxisSize:
-                                                                    MainAxisSize
-                                                                        .max,
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .spaceBetween,
-                                                                children: [
-                                                                  Align(
-                                                                    alignment:
-                                                                        AlignmentDirectional(
-                                                                            -1.0,
+                                                return RefreshIndicator(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .tertiary,
+                                                  backgroundColor:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .accent1,
+                                                  onRefresh: () async {
+                                                    safeSetState(() => _model
+                                                            .requestCompleter1 =
+                                                        null);
+                                                    await _model
+                                                        .waitForRequestCompleted1();
+                                                  },
+                                                  child: ListView.builder(
+                                                    padding: EdgeInsets.zero,
+                                                    shrinkWrap: true,
+                                                    scrollDirection:
+                                                        Axis.vertical,
+                                                    itemCount:
+                                                        bookListOrdersRowList
+                                                            .length,
+                                                    itemBuilder: (context,
+                                                        bookListIndex) {
+                                                      final bookListOrdersRow =
+                                                          bookListOrdersRowList[
+                                                              bookListIndex];
+                                                      return Container(
+                                                        width: 100.0,
+                                                        decoration:
+                                                            BoxDecoration(),
+                                                        child:
+                                                            SingleChildScrollView(
+                                                          child: Column(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .max,
+                                                            children: [
+                                                              Padding(
+                                                                padding:
+                                                                    EdgeInsetsDirectional
+                                                                        .fromSTEB(
+                                                                            0.0,
+                                                                            24.0,
+                                                                            0.0,
                                                                             0.0),
-                                                                    child: Text(
-                                                                      'ref no. ${bookListOrdersRow.id.toString()}',
-                                                                      style: FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .bodyMedium
-                                                                          .override(
-                                                                            fontFamily:
-                                                                                'Montserrat',
-                                                                            color:
-                                                                                Color(0xFF6B6B6B),
-                                                                            letterSpacing:
-                                                                                0.0,
-                                                                            fontWeight:
-                                                                                FontWeight.normal,
-                                                                            fontStyle:
-                                                                                FontStyle.italic,
-                                                                          ),
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            Row(
-                                                              mainAxisSize:
-                                                                  MainAxisSize
-                                                                      .max,
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceBetween,
-                                                              children: [
-                                                                if (bookListOrdersRow
-                                                                        .contractId ==
-                                                                    null)
-                                                                  Align(
-                                                                    alignment:
-                                                                        AlignmentDirectional(
-                                                                            -1.0,
-                                                                            0.0),
-                                                                    child:
-                                                                        Padding(
-                                                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                                                          0.0,
-                                                                          4.0,
-                                                                          0.0,
-                                                                          0.0),
-                                                                      child:
-                                                                          Text(
-                                                                        'One Time Service',
-                                                                        style: FlutterFlowTheme.of(context)
-                                                                            .titleSmall
-                                                                            .override(
-                                                                              fontFamily: 'Montserrat',
-                                                                              color: FlutterFlowTheme.of(context).primaryText,
-                                                                              letterSpacing: 0.0,
-                                                                            ),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                if (bookListOrdersRow
-                                                                        .contractId !=
-                                                                    null)
-                                                                  Align(
-                                                                    alignment:
-                                                                        AlignmentDirectional(
-                                                                            -1.0,
-                                                                            0.0),
-                                                                    child:
-                                                                        Padding(
-                                                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                                                          0.0,
-                                                                          4.0,
-                                                                          0.0,
-                                                                          0.0),
-                                                                      child:
-                                                                          Text(
-                                                                        'Contract',
-                                                                        style: FlutterFlowTheme.of(context)
-                                                                            .titleSmall
-                                                                            .override(
-                                                                              fontFamily: 'Montserrat',
-                                                                              color: FlutterFlowTheme.of(context).primaryText,
-                                                                              letterSpacing: 0.0,
-                                                                            ),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                Align(
-                                                                  alignment:
-                                                                      AlignmentDirectional(
-                                                                          1.0,
-                                                                          0.0),
-                                                                  child:
-                                                                      FFButtonWidget(
-                                                                    onPressed:
-                                                                        () async {
-                                                                      context
-                                                                          .pushNamed(
-                                                                        'BookingDetail',
-                                                                        queryParameters:
-                                                                            {
-                                                                          'orderId':
-                                                                              serializeParam(
-                                                                            bookListOrdersRow.id,
-                                                                            ParamType.int,
-                                                                          ),
-                                                                        }.withoutNulls,
-                                                                        extra: <String,
-                                                                            dynamic>{
-                                                                          kTransitionInfoKey:
-                                                                              TransitionInfo(
-                                                                            hasTransition:
-                                                                                true,
-                                                                            transitionType:
-                                                                                PageTransitionType.scale,
-                                                                            alignment:
-                                                                                Alignment.bottomCenter,
-                                                                          ),
-                                                                        },
-                                                                      );
-                                                                    },
-                                                                    text:
-                                                                        'Details',
-                                                                    options:
-                                                                        FFButtonOptions(
-                                                                      height:
-                                                                          33.0,
-                                                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                                                          24.0,
-                                                                          0.0,
-                                                                          24.0,
-                                                                          0.0),
-                                                                      iconPadding: EdgeInsetsDirectional.fromSTEB(
-                                                                          0.0,
-                                                                          0.0,
-                                                                          0.0,
-                                                                          0.0),
-                                                                      color: FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .info,
-                                                                      textStyle: FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .titleSmall
-                                                                          .override(
-                                                                            fontFamily:
-                                                                                'Montserrat',
-                                                                            color:
-                                                                                FlutterFlowTheme.of(context).primaryText,
-                                                                            fontSize:
-                                                                                12.0,
-                                                                            letterSpacing:
-                                                                                0.0,
-                                                                            fontWeight:
-                                                                                FontWeight.w500,
-                                                                          ),
-                                                                      elevation:
-                                                                          3.0,
-                                                                      borderSide:
-                                                                          BorderSide(
-                                                                        color: FlutterFlowTheme.of(context)
-                                                                            .primaryText,
-                                                                        width:
-                                                                            1.0,
-                                                                      ),
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              5.0),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            FutureBuilder<
-                                                                List<
-                                                                    OrderitemsRow>>(
-                                                              future: FFAppState()
-                                                                  .orderItems(
-                                                                uniqueQueryKey:
-                                                                    bookListOrdersRow
-                                                                        .id
-                                                                        .toString(),
-                                                                requestFn: () =>
-                                                                    OrderitemsTable()
-                                                                        .queryRows(
-                                                                  queryFn:
-                                                                      (q) =>
-                                                                          q.eq(
-                                                                    'order_id',
-                                                                    bookListOrdersRow
-                                                                        .id,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              builder: (context,
-                                                                  snapshot) {
-                                                                // Customize what your widget looks like when it's loading.
-                                                                if (!snapshot
-                                                                    .hasData) {
-                                                                  return Center(
-                                                                    child:
-                                                                        SizedBox(
-                                                                      width:
-                                                                          12.0,
-                                                                      height:
-                                                                          12.0,
-                                                                      child:
-                                                                          CircularProgressIndicator(
-                                                                        valueColor:
-                                                                            AlwaysStoppedAnimation<Color>(
-                                                                          Color(
-                                                                              0x00DC2027),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  );
-                                                                }
-                                                                List<OrderitemsRow>
-                                                                    listViewOrderitemsRowList =
-                                                                    snapshot
-                                                                        .data!;
-
-                                                                return ListView
-                                                                    .builder(
-                                                                  padding:
-                                                                      EdgeInsets
-                                                                          .zero,
-                                                                  shrinkWrap:
-                                                                      true,
-                                                                  scrollDirection:
-                                                                      Axis.vertical,
-                                                                  itemCount:
-                                                                      listViewOrderitemsRowList
-                                                                          .length,
-                                                                  itemBuilder:
-                                                                      (context,
-                                                                          listViewIndex) {
-                                                                    final listViewOrderitemsRow =
-                                                                        listViewOrderitemsRowList[
-                                                                            listViewIndex];
-                                                                    return Align(
+                                                                child: Row(
+                                                                  mainAxisSize:
+                                                                      MainAxisSize
+                                                                          .max,
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .spaceBetween,
+                                                                  children: [
+                                                                    Align(
                                                                       alignment:
                                                                           AlignmentDirectional(
                                                                               -1.0,
                                                                               0.0),
-                                                                      child: FutureBuilder<
-                                                                          List<
-                                                                              ServiceitemsRow>>(
-                                                                        future:
-                                                                            FFAppState().orderItemNames(
-                                                                          uniqueQueryKey: listViewOrderitemsRow
-                                                                              .id
-                                                                              .toString(),
-                                                                          requestFn: () =>
-                                                                              ServiceitemsTable().querySingleRow(
-                                                                            queryFn: (q) =>
-                                                                                q.eq(
-                                                                              'id',
-                                                                              listViewOrderitemsRow.serviceitemId,
+                                                                      child:
+                                                                          Text(
+                                                                        'ref no. ${bookListOrdersRow.id.toString()}',
+                                                                        style: FlutterFlowTheme.of(context)
+                                                                            .bodyMedium
+                                                                            .override(
+                                                                              fontFamily: 'Montserrat',
+                                                                              color: Color(0xFF6B6B6B),
+                                                                              letterSpacing: 0.0,
+                                                                              fontWeight: FontWeight.normal,
+                                                                              fontStyle: FontStyle.italic,
                                                                             ),
-                                                                          ),
-                                                                        ),
-                                                                        builder:
-                                                                            (context,
-                                                                                snapshot) {
-                                                                          // Customize what your widget looks like when it's loading.
-                                                                          if (!snapshot
-                                                                              .hasData) {
-                                                                            return Center(
-                                                                              child: SizedBox(
-                                                                                width: 12.0,
-                                                                                height: 12.0,
-                                                                                child: CircularProgressIndicator(
-                                                                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                                                                    Color(0x00DC2027),
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                            );
-                                                                          }
-                                                                          List<ServiceitemsRow>
-                                                                              textServiceitemsRowList =
-                                                                              snapshot.data!;
-
-                                                                          // Return an empty Container when the item does not exist.
-                                                                          if (snapshot
-                                                                              .data!
-                                                                              .isEmpty) {
-                                                                            return Container();
-                                                                          }
-                                                                          final textServiceitemsRow = textServiceitemsRowList.isNotEmpty
-                                                                              ? textServiceitemsRowList.first
-                                                                              : null;
-
-                                                                          return Text(
-                                                                            '${valueOrDefault<String>(
-                                                                              listViewOrderitemsRow.quantity.toString(),
-                                                                              '1',
-                                                                            )}x ${textServiceitemsRow?.name}',
-                                                                            style: FlutterFlowTheme.of(context).titleSmall.override(
-                                                                                  fontFamily: 'Montserrat',
-                                                                                  color: FlutterFlowTheme.of(context).primaryText,
-                                                                                  letterSpacing: 0.0,
-                                                                                ),
-                                                                          );
-                                                                        },
                                                                       ),
-                                                                    );
-                                                                  },
-                                                                );
-                                                              },
-                                                            ),
-                                                            Padding(
-                                                              padding:
-                                                                  EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                          0.0,
-                                                                          16.0,
-                                                                          0.0,
-                                                                          0.0),
-                                                              child: Row(
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              Row(
                                                                 mainAxisSize:
                                                                     MainAxisSize
                                                                         .max,
@@ -853,63 +620,9 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                     MainAxisAlignment
                                                                         .spaceBetween,
                                                                 children: [
-                                                                  Text(
-                                                                    '${dateTimeFormat("d/M/y", bookListOrdersRow.scheduledTimeslot)} ${dateTimeFormat("EEEE", bookListOrdersRow.scheduledTimeslot)}, ${dateTimeFormat("jm", bookListOrdersRow.scheduledTimeslot)}',
-                                                                    style: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .titleSmall
-                                                                        .override(
-                                                                          fontFamily:
-                                                                              'Montserrat',
-                                                                          color:
-                                                                              FlutterFlowTheme.of(context).primaryText,
-                                                                          letterSpacing:
-                                                                              0.0,
-                                                                          fontWeight:
-                                                                              FontWeight.bold,
-                                                                        ),
-                                                                  ),
                                                                   if (bookListOrdersRow
-                                                                          .status !=
-                                                                      'cancelled')
-                                                                    FlutterFlowIconButton(
-                                                                      borderColor:
-                                                                          Colors
-                                                                              .transparent,
-                                                                      borderRadius:
-                                                                          20.0,
-                                                                      borderWidth:
-                                                                          1.0,
-                                                                      buttonSize:
-                                                                          40.0,
-                                                                      icon:
-                                                                          Icon(
-                                                                        Icons
-                                                                            .edit_calendar_outlined,
-                                                                        color: Color(
-                                                                            0xCCDC2027),
-                                                                        size:
-                                                                            24.0,
-                                                                      ),
-                                                                      onPressed:
-                                                                          () async {
-                                                                        context
-                                                                            .pushNamed(
-                                                                          'SetNewSchedule',
-                                                                          queryParameters:
-                                                                              {
-                                                                            'orderId':
-                                                                                serializeParam(
-                                                                              bookListOrdersRow.id,
-                                                                              ParamType.int,
-                                                                            ),
-                                                                          }.withoutNulls,
-                                                                        );
-                                                                      },
-                                                                    ),
-                                                                  if (bookListOrdersRow
-                                                                          .status ==
-                                                                      'cancelled')
+                                                                          .contractId ==
+                                                                      null)
                                                                     Align(
                                                                       alignment:
                                                                           AlignmentDirectional(
@@ -924,425 +637,268 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                             0.0),
                                                                         child:
                                                                             Text(
-                                                                          'Cancelled',
+                                                                          'One Time Service',
                                                                           style: FlutterFlowTheme.of(context)
                                                                               .titleSmall
                                                                               .override(
                                                                                 fontFamily: 'Montserrat',
                                                                                 color: FlutterFlowTheme.of(context).primaryText,
                                                                                 letterSpacing: 0.0,
-                                                                                decoration: TextDecoration.underline,
                                                                               ),
                                                                         ),
                                                                       ),
                                                                     ),
+                                                                  if (bookListOrdersRow
+                                                                          .contractId !=
+                                                                      null)
+                                                                    Align(
+                                                                      alignment:
+                                                                          AlignmentDirectional(
+                                                                              -1.0,
+                                                                              0.0),
+                                                                      child:
+                                                                          Padding(
+                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                            0.0,
+                                                                            4.0,
+                                                                            0.0,
+                                                                            0.0),
+                                                                        child:
+                                                                            Text(
+                                                                          'Contract',
+                                                                          style: FlutterFlowTheme.of(context)
+                                                                              .titleSmall
+                                                                              .override(
+                                                                                fontFamily: 'Montserrat',
+                                                                                color: FlutterFlowTheme.of(context).primaryText,
+                                                                                letterSpacing: 0.0,
+                                                                              ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  Align(
+                                                                    alignment:
+                                                                        AlignmentDirectional(
+                                                                            1.0,
+                                                                            0.0),
+                                                                    child:
+                                                                        FFButtonWidget(
+                                                                      onPressed:
+                                                                          () async {
+                                                                        context
+                                                                            .pushNamed(
+                                                                          'BookingDetail',
+                                                                          queryParameters:
+                                                                              {
+                                                                            'orderId':
+                                                                                serializeParam(
+                                                                              bookListOrdersRow.id,
+                                                                              ParamType.int,
+                                                                            ),
+                                                                          }.withoutNulls,
+                                                                          extra: <String,
+                                                                              dynamic>{
+                                                                            kTransitionInfoKey:
+                                                                                TransitionInfo(
+                                                                              hasTransition: true,
+                                                                              transitionType: PageTransitionType.scale,
+                                                                              alignment: Alignment.bottomCenter,
+                                                                            ),
+                                                                          },
+                                                                        );
+                                                                      },
+                                                                      text:
+                                                                          'Details',
+                                                                      options:
+                                                                          FFButtonOptions(
+                                                                        height:
+                                                                            33.0,
+                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                            24.0,
+                                                                            0.0,
+                                                                            24.0,
+                                                                            0.0),
+                                                                        iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                                                            0.0,
+                                                                            0.0,
+                                                                            0.0,
+                                                                            0.0),
+                                                                        color: FlutterFlowTheme.of(context)
+                                                                            .info,
+                                                                        textStyle: FlutterFlowTheme.of(context)
+                                                                            .titleSmall
+                                                                            .override(
+                                                                              fontFamily: 'Montserrat',
+                                                                              color: FlutterFlowTheme.of(context).primaryText,
+                                                                              fontSize: 12.0,
+                                                                              letterSpacing: 0.0,
+                                                                              fontWeight: FontWeight.w500,
+                                                                            ),
+                                                                        elevation:
+                                                                            3.0,
+                                                                        borderSide:
+                                                                            BorderSide(
+                                                                          color:
+                                                                              FlutterFlowTheme.of(context).primaryText,
+                                                                          width:
+                                                                              1.0,
+                                                                        ),
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(5.0),
+                                                                      ),
+                                                                    ),
+                                                                  ),
                                                                 ],
                                                               ),
-                                                            ),
-                                                            Padding(
-                                                              padding:
-                                                                  EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                          0.0,
-                                                                          16.0,
-                                                                          0.0,
-                                                                          0.0),
-                                                              child: Container(
-                                                                width: double
-                                                                    .infinity,
-                                                                height: 2.0,
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  color: Color(
-                                                                      0xFFC2C2C2),
+                                                              FutureBuilder<
+                                                                  List<
+                                                                      OrderitemsRow>>(
+                                                                future: FFAppState()
+                                                                    .orderItems(
+                                                                  uniqueQueryKey:
+                                                                      bookListOrdersRow
+                                                                          .id
+                                                                          .toString(),
+                                                                  requestFn: () =>
+                                                                      OrderitemsTable()
+                                                                          .queryRows(
+                                                                    queryFn:
+                                                                        (q) => q
+                                                                            .eq(
+                                                                      'order_id',
+                                                                      bookListOrdersRow
+                                                                          .id,
+                                                                    ),
+                                                                  ),
                                                                 ),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    );
-                                                  },
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                          Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    0.0, 24.0, 0.0, 0.0),
-                                            child: FFButtonWidget(
-                                              onPressed: () {
-                                                print('Button pressed ...');
-                                              },
-                                              text: '+ Create New',
-                                              options: FFButtonOptions(
-                                                width: 320.0,
-                                                height: 36.0,
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
-                                                        0.0, 0.0, 0.0, 0.0),
-                                                iconPadding:
-                                                    EdgeInsetsDirectional
-                                                        .fromSTEB(
-                                                            0.0, 0.0, 0.0, 0.0),
-                                                color: Colors.white,
-                                                textStyle: FlutterFlowTheme.of(
-                                                        context)
-                                                    .bodySmall
-                                                    .override(
-                                                      fontFamily: 'Montserrat',
-                                                      fontSize: 14.0,
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      decoration: TextDecoration
-                                                          .underline,
-                                                    ),
-                                                elevation: 0.0,
-                                                borderRadius:
-                                                    BorderRadius.circular(0.0),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    SingleChildScrollView(
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.max,
-                                        children: [
-                                          Align(
-                                            alignment:
-                                                AlignmentDirectional(0.0, -1.0),
-                                            child: Container(
-                                              width: double.infinity,
-                                              height: 2.0,
-                                              decoration: BoxDecoration(
-                                                color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .primary,
-                                              ),
-                                            ),
-                                          ),
-                                          Align(
-                                            alignment:
-                                                AlignmentDirectional(-1.0, 0.0),
-                                            child: Padding(
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(
-                                                      0.0, 24.0, 0.0, 0.0),
-                                              child: Text(
-                                                'Pending Bookings',
-                                                style: FlutterFlowTheme.of(
-                                                        context)
-                                                    .titleMedium
-                                                    .override(
-                                                      fontFamily: 'Montserrat',
-                                                      color:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .primaryText,
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                              ),
-                                            ),
-                                          ),
-                                          Align(
-                                            alignment:
-                                                AlignmentDirectional(-1.0, 0.0),
-                                            child: Padding(
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(0.0, 8.0, 0.0, 0.0),
-                                              child: Text(
-                                                'Booking Status: Pending Confirmation',
-                                                style: FlutterFlowTheme.of(
-                                                        context)
-                                                    .bodyMedium
-                                                    .override(
-                                                      fontFamily: 'Montserrat',
-                                                      color: Color(0xFF6B6B6B),
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FontWeight.normal,
-                                                      fontStyle:
-                                                          FontStyle.italic,
-                                                    ),
-                                              ),
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    0.0, 8.0, 0.0, 0.0),
-                                            child: Container(
-                                              width: double.infinity,
-                                              height: 2.0,
-                                              decoration: BoxDecoration(
-                                                color: Color(0xFFC2C2C2),
-                                              ),
-                                            ),
-                                          ),
-                                          FutureBuilder<List<OrdersRow>>(
-                                            future: (_model
-                                                        .requestCompleter1 ??=
-                                                    Completer<List<OrdersRow>>()
-                                                      ..complete(OrdersTable()
-                                                          .queryRows(
-                                                        queryFn: (q) => q
-                                                            .eq(
-                                                              'deleted',
-                                                              false,
-                                                            )
-                                                            .gte(
-                                                              'scheduled_timeslot',
-                                                              supaSerialize<
-                                                                      DateTime>(
-                                                                  getCurrentTimestamp),
-                                                            )
-                                                            .eq(
-                                                              'status',
-                                                              'pending',
-                                                            )
-                                                            .eq(
-                                                              'customer_id',
-                                                              homePageCustomersRow
-                                                                  ?.id,
-                                                            )
-                                                            .order('date'),
-                                                        limit: 5,
-                                                      )))
-                                                .future,
-                                            builder: (context, snapshot) {
-                                              // Customize what your widget looks like when it's loading.
-                                              if (!snapshot.hasData) {
-                                                return Center(
-                                                  child: SizedBox(
-                                                    width: 88.0,
-                                                    height: 88.0,
-                                                    child: SpinKitRipple(
-                                                      color:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .tertiary,
-                                                      size: 88.0,
-                                                    ),
-                                                  ),
-                                                );
-                                              }
-                                              List<OrdersRow>
-                                                  bookListOrdersRowList =
-                                                  snapshot.data!;
-
-                                              if (bookListOrdersRowList
-                                                  .isEmpty) {
-                                                return Container(
-                                                  width: 320.0,
-                                                  child:
-                                                      NopendingbookingsWidget(),
-                                                );
-                                              }
-
-                                              return RefreshIndicator(
-                                                color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .tertiary,
-                                                backgroundColor:
-                                                    FlutterFlowTheme.of(context)
-                                                        .accent1,
-                                                onRefresh: () async {
-                                                  setState(() =>
-                                                      _model.requestCompleter1 =
-                                                          null);
-                                                  await _model
-                                                      .waitForRequestCompleted1();
-                                                },
-                                                child: ListView.builder(
-                                                  padding: EdgeInsets.zero,
-                                                  shrinkWrap: true,
-                                                  scrollDirection:
-                                                      Axis.vertical,
-                                                  itemCount:
-                                                      bookListOrdersRowList
-                                                          .length,
-                                                  itemBuilder:
-                                                      (context, bookListIndex) {
-                                                    final bookListOrdersRow =
-                                                        bookListOrdersRowList[
-                                                            bookListIndex];
-                                                    return Container(
-                                                      width: 100.0,
-                                                      decoration:
-                                                          BoxDecoration(),
-                                                      child:
-                                                          SingleChildScrollView(
-                                                        child: Column(
-                                                          mainAxisSize:
-                                                              MainAxisSize.max,
-                                                          children: [
-                                                            Padding(
-                                                              padding:
-                                                                  EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                          0.0,
-                                                                          24.0,
-                                                                          0.0,
-                                                                          0.0),
-                                                              child: Row(
-                                                                mainAxisSize:
-                                                                    MainAxisSize
-                                                                        .max,
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .spaceBetween,
-                                                                children: [
-                                                                  Align(
-                                                                    alignment:
-                                                                        AlignmentDirectional(
-                                                                            -1.0,
-                                                                            0.0),
-                                                                    child: Text(
-                                                                      'ref no. ${bookListOrdersRow.id.toString()}',
-                                                                      style: FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .bodyMedium
-                                                                          .override(
-                                                                            fontFamily:
-                                                                                'Montserrat',
-                                                                            color:
-                                                                                Color(0xFF6B6B6B),
-                                                                            letterSpacing:
-                                                                                0.0,
-                                                                            fontWeight:
-                                                                                FontWeight.normal,
-                                                                            fontStyle:
-                                                                                FontStyle.italic,
-                                                                          ),
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            Row(
-                                                              mainAxisSize:
-                                                                  MainAxisSize
-                                                                      .max,
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceBetween,
-                                                              children: [
-                                                                if (bookListOrdersRow
-                                                                        .contractId ==
-                                                                    null)
-                                                                  Align(
-                                                                    alignment:
-                                                                        AlignmentDirectional(
-                                                                            -1.0,
-                                                                            0.0),
-                                                                    child:
-                                                                        Padding(
-                                                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                                                          0.0,
-                                                                          4.0,
-                                                                          0.0,
-                                                                          0.0),
+                                                                builder: (context,
+                                                                    snapshot) {
+                                                                  // Customize what your widget looks like when it's loading.
+                                                                  if (!snapshot
+                                                                      .hasData) {
+                                                                    return Center(
                                                                       child:
-                                                                          Text(
-                                                                        'One Time Service',
-                                                                        style: FlutterFlowTheme.of(context)
-                                                                            .titleSmall
-                                                                            .override(
-                                                                              fontFamily: 'Montserrat',
-                                                                              color: FlutterFlowTheme.of(context).primaryText,
-                                                                              letterSpacing: 0.0,
-                                                                            ),
+                                                                          SizedBox(
+                                                                        width:
+                                                                            12.0,
+                                                                        height:
+                                                                            12.0,
+                                                                        child:
+                                                                            CircularProgressIndicator(
+                                                                          valueColor:
+                                                                              AlwaysStoppedAnimation<Color>(
+                                                                            Color(0x00DC2027),
+                                                                          ),
+                                                                        ),
                                                                       ),
-                                                                    ),
-                                                                  ),
-                                                                if (bookListOrdersRow
-                                                                        .contractId !=
-                                                                    null)
-                                                                  Align(
-                                                                    alignment:
-                                                                        AlignmentDirectional(
+                                                                    );
+                                                                  }
+                                                                  List<OrderitemsRow>
+                                                                      listViewOrderitemsRowList =
+                                                                      snapshot
+                                                                          .data!;
+
+                                                                  return ListView
+                                                                      .builder(
+                                                                    padding:
+                                                                        EdgeInsets
+                                                                            .zero,
+                                                                    shrinkWrap:
+                                                                        true,
+                                                                    scrollDirection:
+                                                                        Axis.vertical,
+                                                                    itemCount:
+                                                                        listViewOrderitemsRowList
+                                                                            .length,
+                                                                    itemBuilder:
+                                                                        (context,
+                                                                            listViewIndex) {
+                                                                      final listViewOrderitemsRow =
+                                                                          listViewOrderitemsRowList[
+                                                                              listViewIndex];
+                                                                      return Align(
+                                                                        alignment: AlignmentDirectional(
                                                                             -1.0,
                                                                             0.0),
-                                                                    child:
-                                                                        Padding(
-                                                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                                                          0.0,
-                                                                          4.0,
-                                                                          0.0,
-                                                                          0.0),
-                                                                      child:
-                                                                          Text(
-                                                                        'Contract',
-                                                                        style: FlutterFlowTheme.of(context)
-                                                                            .titleSmall
-                                                                            .override(
-                                                                              fontFamily: 'Montserrat',
-                                                                              color: FlutterFlowTheme.of(context).primaryText,
-                                                                              letterSpacing: 0.0,
+                                                                        child: FutureBuilder<
+                                                                            List<ServiceitemsRow>>(
+                                                                          future:
+                                                                              FFAppState().orderItemNames(
+                                                                            uniqueQueryKey:
+                                                                                listViewOrderitemsRow.id.toString(),
+                                                                            requestFn: () =>
+                                                                                ServiceitemsTable().querySingleRow(
+                                                                              queryFn: (q) => q.eq(
+                                                                                'id',
+                                                                                listViewOrderitemsRow.serviceitemId,
+                                                                              ),
                                                                             ),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                Align(
-                                                                  alignment:
-                                                                      AlignmentDirectional(
-                                                                          1.0,
-                                                                          0.0),
-                                                                  child:
-                                                                      FFButtonWidget(
-                                                                    onPressed:
-                                                                        () async {
-                                                                      context
-                                                                          .pushNamed(
-                                                                        'BookingDetail',
-                                                                        queryParameters:
-                                                                            {
-                                                                          'orderId':
-                                                                              serializeParam(
-                                                                            bookListOrdersRow.id,
-                                                                            ParamType.int,
                                                                           ),
-                                                                        }.withoutNulls,
-                                                                        extra: <String,
-                                                                            dynamic>{
-                                                                          kTransitionInfoKey:
-                                                                              TransitionInfo(
-                                                                            hasTransition:
-                                                                                true,
-                                                                            transitionType:
-                                                                                PageTransitionType.scale,
-                                                                            alignment:
-                                                                                Alignment.bottomCenter,
-                                                                          ),
-                                                                        },
+                                                                          builder:
+                                                                              (context, snapshot) {
+                                                                            // Customize what your widget looks like when it's loading.
+                                                                            if (!snapshot.hasData) {
+                                                                              return Center(
+                                                                                child: SizedBox(
+                                                                                  width: 12.0,
+                                                                                  height: 12.0,
+                                                                                  child: CircularProgressIndicator(
+                                                                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                                                                      Color(0x00DC2027),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              );
+                                                                            }
+                                                                            List<ServiceitemsRow>
+                                                                                textServiceitemsRowList =
+                                                                                snapshot.data!;
+
+                                                                            // Return an empty Container when the item does not exist.
+                                                                            if (snapshot.data!.isEmpty) {
+                                                                              return Container();
+                                                                            }
+                                                                            final textServiceitemsRow = textServiceitemsRowList.isNotEmpty
+                                                                                ? textServiceitemsRowList.first
+                                                                                : null;
+
+                                                                            return Text(
+                                                                              '${valueOrDefault<String>(
+                                                                                listViewOrderitemsRow.quantity.toString(),
+                                                                                '1',
+                                                                              )}x ${textServiceitemsRow?.name}',
+                                                                              style: FlutterFlowTheme.of(context).titleSmall.override(
+                                                                                    fontFamily: 'Montserrat',
+                                                                                    color: FlutterFlowTheme.of(context).primaryText,
+                                                                                    letterSpacing: 0.0,
+                                                                                  ),
+                                                                            );
+                                                                          },
+                                                                        ),
                                                                       );
                                                                     },
-                                                                    text:
-                                                                        'Details',
-                                                                    options:
-                                                                        FFButtonOptions(
-                                                                      height:
-                                                                          33.0,
-                                                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                                                          24.0,
-                                                                          0.0,
-                                                                          24.0,
-                                                                          0.0),
-                                                                      iconPadding: EdgeInsetsDirectional.fromSTEB(
-                                                                          0.0,
-                                                                          0.0,
-                                                                          0.0,
-                                                                          0.0),
-                                                                      color: FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .info,
-                                                                      textStyle: FlutterFlowTheme.of(
+                                                                  );
+                                                                },
+                                                              ),
+                                                              Padding(
+                                                                padding:
+                                                                    EdgeInsetsDirectional
+                                                                        .fromSTEB(
+                                                                            0.0,
+                                                                            16.0,
+                                                                            0.0,
+                                                                            0.0),
+                                                                child: Row(
+                                                                  mainAxisSize:
+                                                                      MainAxisSize
+                                                                          .max,
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .spaceBetween,
+                                                                  children: [
+                                                                    Text(
+                                                                      '${dateTimeFormat("d/M/y", bookListOrdersRow.scheduledTimeslot)} ${dateTimeFormat("EEEE", bookListOrdersRow.scheduledTimeslot)}, ${dateTimeFormat("jm", bookListOrdersRow.scheduledTimeslot)}',
+                                                                      style: FlutterFlowTheme.of(
                                                                               context)
                                                                           .titleSmall
                                                                           .override(
@@ -1350,270 +906,744 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                 'Montserrat',
                                                                             color:
                                                                                 FlutterFlowTheme.of(context).primaryText,
-                                                                            fontSize:
-                                                                                12.0,
                                                                             letterSpacing:
                                                                                 0.0,
                                                                             fontWeight:
-                                                                                FontWeight.w500,
+                                                                                FontWeight.bold,
                                                                           ),
-                                                                      elevation:
-                                                                          3.0,
-                                                                      borderSide:
-                                                                          BorderSide(
-                                                                        color: FlutterFlowTheme.of(context)
-                                                                            .primaryText,
-                                                                        width:
+                                                                    ),
+                                                                    if (bookListOrdersRow
+                                                                            .status !=
+                                                                        'cancelled')
+                                                                      FlutterFlowIconButton(
+                                                                        borderColor:
+                                                                            Colors.transparent,
+                                                                        borderRadius:
+                                                                            20.0,
+                                                                        borderWidth:
                                                                             1.0,
-                                                                      ),
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              5.0),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            FutureBuilder<
-                                                                List<
-                                                                    OrderitemsRow>>(
-                                                              future: FFAppState()
-                                                                  .orderItems(
-                                                                uniqueQueryKey:
-                                                                    bookListOrdersRow
-                                                                        .id
-                                                                        .toString(),
-                                                                requestFn: () =>
-                                                                    OrderitemsTable()
-                                                                        .queryRows(
-                                                                  queryFn:
-                                                                      (q) =>
-                                                                          q.eq(
-                                                                    'order_id',
-                                                                    bookListOrdersRow
-                                                                        .id,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              builder: (context,
-                                                                  snapshot) {
-                                                                // Customize what your widget looks like when it's loading.
-                                                                if (!snapshot
-                                                                    .hasData) {
-                                                                  return Center(
-                                                                    child:
-                                                                        SizedBox(
-                                                                      width:
-                                                                          12.0,
-                                                                      height:
-                                                                          12.0,
-                                                                      child:
-                                                                          CircularProgressIndicator(
-                                                                        valueColor:
-                                                                            AlwaysStoppedAnimation<Color>(
-                                                                          Color(
-                                                                              0x00DC2027),
+                                                                        buttonSize:
+                                                                            40.0,
+                                                                        icon:
+                                                                            Icon(
+                                                                          Icons
+                                                                              .edit_calendar_outlined,
+                                                                          color:
+                                                                              Color(0xCCDC2027),
+                                                                          size:
+                                                                              24.0,
                                                                         ),
-                                                                      ),
-                                                                    ),
-                                                                  );
-                                                                }
-                                                                List<OrderitemsRow>
-                                                                    listViewOrderitemsRowList =
-                                                                    snapshot
-                                                                        .data!;
-
-                                                                return ListView
-                                                                    .builder(
-                                                                  padding:
-                                                                      EdgeInsets
-                                                                          .zero,
-                                                                  shrinkWrap:
-                                                                      true,
-                                                                  scrollDirection:
-                                                                      Axis.vertical,
-                                                                  itemCount:
-                                                                      listViewOrderitemsRowList
-                                                                          .length,
-                                                                  itemBuilder:
-                                                                      (context,
-                                                                          listViewIndex) {
-                                                                    final listViewOrderitemsRow =
-                                                                        listViewOrderitemsRowList[
-                                                                            listViewIndex];
-                                                                    return Align(
-                                                                      alignment:
-                                                                          AlignmentDirectional(
-                                                                              -1.0,
-                                                                              0.0),
-                                                                      child: FutureBuilder<
-                                                                          List<
-                                                                              ServiceitemsRow>>(
-                                                                        future:
-                                                                            FFAppState().orderItemNames(
-                                                                          uniqueQueryKey: listViewOrderitemsRow
-                                                                              .id
-                                                                              .toString(),
-                                                                          requestFn: () =>
-                                                                              ServiceitemsTable().querySingleRow(
-                                                                            queryFn: (q) =>
-                                                                                q.eq(
-                                                                              'id',
-                                                                              listViewOrderitemsRow.serviceitemId,
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                        builder:
-                                                                            (context,
-                                                                                snapshot) {
-                                                                          // Customize what your widget looks like when it's loading.
-                                                                          if (!snapshot
-                                                                              .hasData) {
-                                                                            return Center(
-                                                                              child: SizedBox(
-                                                                                width: 12.0,
-                                                                                height: 12.0,
-                                                                                child: CircularProgressIndicator(
-                                                                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                                                                    Color(0x00DC2027),
-                                                                                  ),
-                                                                                ),
+                                                                        onPressed:
+                                                                            () async {
+                                                                          context
+                                                                              .pushNamed(
+                                                                            'SetNewSchedule',
+                                                                            queryParameters:
+                                                                                {
+                                                                              'orderId': serializeParam(
+                                                                                bookListOrdersRow.id,
+                                                                                ParamType.int,
                                                                               ),
-                                                                            );
-                                                                          }
-                                                                          List<ServiceitemsRow>
-                                                                              textServiceitemsRowList =
-                                                                              snapshot.data!;
-
-                                                                          // Return an empty Container when the item does not exist.
-                                                                          if (snapshot
-                                                                              .data!
-                                                                              .isEmpty) {
-                                                                            return Container();
-                                                                          }
-                                                                          final textServiceitemsRow = textServiceitemsRowList.isNotEmpty
-                                                                              ? textServiceitemsRowList.first
-                                                                              : null;
-
-                                                                          return Text(
-                                                                            '${valueOrDefault<String>(
-                                                                              listViewOrderitemsRow.quantity.toString(),
-                                                                              '1',
-                                                                            )}x ${textServiceitemsRow?.name}',
+                                                                            }.withoutNulls,
+                                                                          );
+                                                                        },
+                                                                      ),
+                                                                    if (bookListOrdersRow
+                                                                            .status ==
+                                                                        'cancelled')
+                                                                      Align(
+                                                                        alignment: AlignmentDirectional(
+                                                                            -1.0,
+                                                                            0.0),
+                                                                        child:
+                                                                            Padding(
+                                                                          padding: EdgeInsetsDirectional.fromSTEB(
+                                                                              0.0,
+                                                                              4.0,
+                                                                              0.0,
+                                                                              0.0),
+                                                                          child:
+                                                                              Text(
+                                                                            'Cancelled',
                                                                             style: FlutterFlowTheme.of(context).titleSmall.override(
                                                                                   fontFamily: 'Montserrat',
                                                                                   color: FlutterFlowTheme.of(context).primaryText,
                                                                                   letterSpacing: 0.0,
+                                                                                  decoration: TextDecoration.underline,
                                                                                 ),
-                                                                          );
-                                                                        },
+                                                                          ),
+                                                                        ),
                                                                       ),
-                                                                    );
-                                                                  },
-                                                                );
-                                                              },
-                                                            ),
-                                                            Padding(
-                                                              padding:
-                                                                  EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                          0.0,
-                                                                          16.0,
-                                                                          0.0,
-                                                                          0.0),
-                                                              child: Row(
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              Padding(
+                                                                padding:
+                                                                    EdgeInsetsDirectional
+                                                                        .fromSTEB(
+                                                                            0.0,
+                                                                            16.0,
+                                                                            0.0,
+                                                                            0.0),
+                                                                child:
+                                                                    Container(
+                                                                  width: double
+                                                                      .infinity,
+                                                                  height: 2.0,
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    color: Color(
+                                                                        0xFFC2C2C2),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                            Padding(
+                                              padding: EdgeInsetsDirectional
+                                                  .fromSTEB(
+                                                      0.0, 24.0, 0.0, 0.0),
+                                              child: FFButtonWidget(
+                                                onPressed: () async {
+                                                  context.pushNamed(
+                                                    'BookingForm1',
+                                                    queryParameters: {
+                                                      'devmode': serializeParam(
+                                                        false,
+                                                        ParamType.bool,
+                                                      ),
+                                                      'customerId':
+                                                          serializeParam(
+                                                        homePageCustomersRow
+                                                            ?.id,
+                                                        ParamType.String,
+                                                      ),
+                                                    }.withoutNulls,
+                                                    extra: <String, dynamic>{
+                                                      kTransitionInfoKey:
+                                                          TransitionInfo(
+                                                        hasTransition: true,
+                                                        transitionType:
+                                                            PageTransitionType
+                                                                .rightToLeft,
+                                                      ),
+                                                    },
+                                                  );
+                                                },
+                                                text: '+ Create New',
+                                                options: FFButtonOptions(
+                                                  width: 320.0,
+                                                  height: 36.0,
+                                                  padding: EdgeInsetsDirectional
+                                                      .fromSTEB(
+                                                          0.0, 0.0, 0.0, 0.0),
+                                                  iconPadding:
+                                                      EdgeInsetsDirectional
+                                                          .fromSTEB(0.0, 0.0,
+                                                              0.0, 0.0),
+                                                  color: Colors.white,
+                                                  textStyle:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodySmall
+                                                          .override(
+                                                            fontFamily:
+                                                                'Montserrat',
+                                                            fontSize: 14.0,
+                                                            letterSpacing: 0.0,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            decoration:
+                                                                TextDecoration
+                                                                    .underline,
+                                                          ),
+                                                  elevation: 0.0,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          0.0),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          16.0, 0.0, 16.0, 0.0),
+                                      child: SingleChildScrollView(
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.max,
+                                          children: [
+                                            Align(
+                                              alignment: AlignmentDirectional(
+                                                  0.0, -1.0),
+                                              child: Container(
+                                                width: double.infinity,
+                                                height: 2.0,
+                                                constraints: BoxConstraints(
+                                                  minWidth: double.infinity,
+                                                  maxWidth: double.infinity,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .primary,
+                                                ),
+                                              ),
+                                            ),
+                                            Align(
+                                              alignment: AlignmentDirectional(
+                                                  -1.0, 0.0),
+                                              child: Padding(
+                                                padding: EdgeInsetsDirectional
+                                                    .fromSTEB(
+                                                        0.0, 24.0, 0.0, 0.0),
+                                                child: Text(
+                                                  'Pending Bookings',
+                                                  style: FlutterFlowTheme.of(
+                                                          context)
+                                                      .titleMedium
+                                                      .override(
+                                                        fontFamily:
+                                                            'Montserrat',
+                                                        color:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .primaryText,
+                                                        letterSpacing: 0.0,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                ),
+                                              ),
+                                            ),
+                                            Align(
+                                              alignment: AlignmentDirectional(
+                                                  -1.0, 0.0),
+                                              child: Padding(
+                                                padding: EdgeInsetsDirectional
+                                                    .fromSTEB(
+                                                        0.0, 8.0, 0.0, 0.0),
+                                                child: Text(
+                                                  'Booking Status: Pending Confirmation',
+                                                  style: FlutterFlowTheme.of(
+                                                          context)
+                                                      .bodyMedium
+                                                      .override(
+                                                        fontFamily:
+                                                            'Montserrat',
+                                                        color:
+                                                            Color(0xFF6B6B6B),
+                                                        letterSpacing: 0.0,
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                        fontStyle:
+                                                            FontStyle.italic,
+                                                      ),
+                                                ),
+                                              ),
+                                            ),
+                                            Column(
+                                              mainAxisSize: MainAxisSize.max,
+                                              children: [
+                                                Padding(
+                                                  padding: EdgeInsetsDirectional
+                                                      .fromSTEB(
+                                                          0.0, 8.0, 0.0, 0.0),
+                                                  child: Container(
+                                                    width: double.infinity,
+                                                    height: 2.0,
+                                                    decoration: BoxDecoration(
+                                                      color: Color(0xFFC2C2C2),
+                                                    ),
+                                                  ),
+                                                ),
+                                                FutureBuilder<List<OrdersRow>>(
+                                                  future: (_model
+                                                              .requestCompleter2 ??=
+                                                          Completer<
+                                                              List<OrdersRow>>()
+                                                            ..complete(
+                                                                OrdersTable()
+                                                                    .queryRows(
+                                                              queryFn: (q) => q
+                                                                  .eq(
+                                                                    'deleted',
+                                                                    false,
+                                                                  )
+                                                                  .gte(
+                                                                    'preferred_timeslot',
+                                                                    supaSerialize<
+                                                                            DateTime>(
+                                                                        getCurrentTimestamp),
+                                                                  )
+                                                                  .eq(
+                                                                    'status',
+                                                                    'new',
+                                                                  )
+                                                                  .eq(
+                                                                    'customer_id',
+                                                                    homePageCustomersRow
+                                                                        ?.id,
+                                                                  )
+                                                                  .is_(
+                                                                    'scheduled_timeslot',
+                                                                    null,
+                                                                  )
+                                                                  .order(
+                                                                      'date'),
+                                                              limit: 5,
+                                                            )))
+                                                      .future,
+                                                  builder: (context, snapshot) {
+                                                    // Customize what your widget looks like when it's loading.
+                                                    if (!snapshot.hasData) {
+                                                      return Center(
+                                                        child: SizedBox(
+                                                          width: 88.0,
+                                                          height: 88.0,
+                                                          child: SpinKitRipple(
+                                                            color: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .tertiary,
+                                                            size: 88.0,
+                                                          ),
+                                                        ),
+                                                      );
+                                                    }
+                                                    List<OrdersRow>
+                                                        bookListOrdersRowList =
+                                                        snapshot.data!;
+
+                                                    if (bookListOrdersRowList
+                                                        .isEmpty) {
+                                                      return Container(
+                                                        width: 320.0,
+                                                        child:
+                                                            NopendingbookingsWidget(),
+                                                      );
+                                                    }
+
+                                                    return RefreshIndicator(
+                                                      color:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .tertiary,
+                                                      backgroundColor:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .accent1,
+                                                      onRefresh: () async {
+                                                        safeSetState(() => _model
+                                                                .requestCompleter2 =
+                                                            null);
+                                                        await _model
+                                                            .waitForRequestCompleted2();
+                                                      },
+                                                      child: ListView.builder(
+                                                        padding:
+                                                            EdgeInsets.zero,
+                                                        shrinkWrap: true,
+                                                        scrollDirection:
+                                                            Axis.vertical,
+                                                        itemCount:
+                                                            bookListOrdersRowList
+                                                                .length,
+                                                        itemBuilder: (context,
+                                                            bookListIndex) {
+                                                          final bookListOrdersRow =
+                                                              bookListOrdersRowList[
+                                                                  bookListIndex];
+                                                          return Container(
+                                                            width: 100.0,
+                                                            decoration:
+                                                                BoxDecoration(),
+                                                            child:
+                                                                SingleChildScrollView(
+                                                              child: Column(
                                                                 mainAxisSize:
                                                                     MainAxisSize
                                                                         .max,
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .spaceBetween,
                                                                 children: [
-                                                                  Text(
-                                                                    '${dateTimeFormat("d/M/y", bookListOrdersRow.scheduledTimeslot)} ${dateTimeFormat("EEEE", bookListOrdersRow.scheduledTimeslot)}, ${dateTimeFormat("jm", bookListOrdersRow.scheduledTimeslot)}',
-                                                                    style: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .titleSmall
-                                                                        .override(
-                                                                          fontFamily:
-                                                                              'Montserrat',
-                                                                          color:
-                                                                              FlutterFlowTheme.of(context).primaryText,
-                                                                          letterSpacing:
-                                                                              0.0,
-                                                                          fontWeight:
-                                                                              FontWeight.bold,
-                                                                        ),
-                                                                  ),
-                                                                  FlutterFlowIconButton(
-                                                                    borderColor:
-                                                                        Colors
-                                                                            .transparent,
-                                                                    borderRadius:
-                                                                        20.0,
-                                                                    borderWidth:
-                                                                        1.0,
-                                                                    buttonSize:
-                                                                        40.0,
-                                                                    icon: Icon(
-                                                                      Icons
-                                                                          .edit_calendar_outlined,
-                                                                      color: Color(
-                                                                          0xCCDC2027),
-                                                                      size:
-                                                                          24.0,
-                                                                    ),
-                                                                    onPressed:
-                                                                        () async {
-                                                                      context
-                                                                          .pushNamed(
-                                                                        'SetNewSchedule',
-                                                                        queryParameters:
-                                                                            {
-                                                                          'orderId':
-                                                                              serializeParam(
-                                                                            bookListOrdersRow.id,
-                                                                            ParamType.int,
+                                                                  Padding(
+                                                                    padding: EdgeInsetsDirectional
+                                                                        .fromSTEB(
+                                                                            0.0,
+                                                                            24.0,
+                                                                            0.0,
+                                                                            0.0),
+                                                                    child: Row(
+                                                                      mainAxisSize:
+                                                                          MainAxisSize
+                                                                              .max,
+                                                                      mainAxisAlignment:
+                                                                          MainAxisAlignment
+                                                                              .spaceBetween,
+                                                                      children: [
+                                                                        Align(
+                                                                          alignment: AlignmentDirectional(
+                                                                              -1.0,
+                                                                              0.0),
+                                                                          child:
+                                                                              Text(
+                                                                            'ref no. ${bookListOrdersRow.id.toString()}',
+                                                                            style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                  fontFamily: 'Montserrat',
+                                                                                  color: Color(0xFF6B6B6B),
+                                                                                  letterSpacing: 0.0,
+                                                                                  fontWeight: FontWeight.normal,
+                                                                                  fontStyle: FontStyle.italic,
+                                                                                ),
                                                                           ),
-                                                                        }.withoutNulls,
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                  Row(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .max,
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .spaceBetween,
+                                                                    children: [
+                                                                      if (bookListOrdersRow
+                                                                              .contractId ==
+                                                                          null)
+                                                                        Align(
+                                                                          alignment: AlignmentDirectional(
+                                                                              -1.0,
+                                                                              0.0),
+                                                                          child:
+                                                                              Padding(
+                                                                            padding: EdgeInsetsDirectional.fromSTEB(
+                                                                                0.0,
+                                                                                4.0,
+                                                                                0.0,
+                                                                                0.0),
+                                                                            child:
+                                                                                Text(
+                                                                              'One Time Service',
+                                                                              style: FlutterFlowTheme.of(context).titleSmall.override(
+                                                                                    fontFamily: 'Montserrat',
+                                                                                    color: FlutterFlowTheme.of(context).primaryText,
+                                                                                    letterSpacing: 0.0,
+                                                                                  ),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      if (bookListOrdersRow
+                                                                              .contractId !=
+                                                                          null)
+                                                                        Align(
+                                                                          alignment: AlignmentDirectional(
+                                                                              -1.0,
+                                                                              0.0),
+                                                                          child:
+                                                                              Padding(
+                                                                            padding: EdgeInsetsDirectional.fromSTEB(
+                                                                                0.0,
+                                                                                4.0,
+                                                                                0.0,
+                                                                                0.0),
+                                                                            child:
+                                                                                Text(
+                                                                              'Contract',
+                                                                              style: FlutterFlowTheme.of(context).titleSmall.override(
+                                                                                    fontFamily: 'Montserrat',
+                                                                                    color: FlutterFlowTheme.of(context).primaryText,
+                                                                                    letterSpacing: 0.0,
+                                                                                  ),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      Align(
+                                                                        alignment: AlignmentDirectional(
+                                                                            1.0,
+                                                                            0.0),
+                                                                        child:
+                                                                            FFButtonWidget(
+                                                                          onPressed:
+                                                                              () async {
+                                                                            context.pushNamed(
+                                                                              'BookingDetail',
+                                                                              queryParameters: {
+                                                                                'orderId': serializeParam(
+                                                                                  bookListOrdersRow.id,
+                                                                                  ParamType.int,
+                                                                                ),
+                                                                              }.withoutNulls,
+                                                                              extra: <String, dynamic>{
+                                                                                kTransitionInfoKey: TransitionInfo(
+                                                                                  hasTransition: true,
+                                                                                  transitionType: PageTransitionType.scale,
+                                                                                  alignment: Alignment.bottomCenter,
+                                                                                ),
+                                                                              },
+                                                                            );
+                                                                          },
+                                                                          text:
+                                                                              'Details',
+                                                                          options:
+                                                                              FFButtonOptions(
+                                                                            height:
+                                                                                36.0,
+                                                                            padding: EdgeInsetsDirectional.fromSTEB(
+                                                                                24.0,
+                                                                                0.0,
+                                                                                24.0,
+                                                                                0.0),
+                                                                            iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                                                                0.0,
+                                                                                0.0,
+                                                                                0.0,
+                                                                                0.0),
+                                                                            color:
+                                                                                FlutterFlowTheme.of(context).info,
+                                                                            textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+                                                                                  fontFamily: 'Montserrat',
+                                                                                  color: FlutterFlowTheme.of(context).primaryText,
+                                                                                  fontSize: 12.0,
+                                                                                  letterSpacing: 0.0,
+                                                                                  fontWeight: FontWeight.w500,
+                                                                                ),
+                                                                            elevation:
+                                                                                3.0,
+                                                                            borderSide:
+                                                                                BorderSide(
+                                                                              color: FlutterFlowTheme.of(context).primaryText,
+                                                                              width: 1.0,
+                                                                            ),
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(5.0),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                  FutureBuilder<
+                                                                      List<
+                                                                          OrderitemsRow>>(
+                                                                    future: FFAppState()
+                                                                        .orderItems(
+                                                                      uniqueQueryKey:
+                                                                          bookListOrdersRow
+                                                                              .id
+                                                                              .toString(),
+                                                                      requestFn:
+                                                                          () =>
+                                                                              OrderitemsTable().queryRows(
+                                                                        queryFn:
+                                                                            (q) =>
+                                                                                q.eq(
+                                                                          'order_id',
+                                                                          bookListOrdersRow
+                                                                              .id,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    builder:
+                                                                        (context,
+                                                                            snapshot) {
+                                                                      // Customize what your widget looks like when it's loading.
+                                                                      if (!snapshot
+                                                                          .hasData) {
+                                                                        return Center(
+                                                                          child:
+                                                                              SizedBox(
+                                                                            width:
+                                                                                12.0,
+                                                                            height:
+                                                                                12.0,
+                                                                            child:
+                                                                                CircularProgressIndicator(
+                                                                              valueColor: AlwaysStoppedAnimation<Color>(
+                                                                                Color(0x00DC2027),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        );
+                                                                      }
+                                                                      List<OrderitemsRow>
+                                                                          listViewOrderitemsRowList =
+                                                                          snapshot
+                                                                              .data!;
+
+                                                                      return ListView
+                                                                          .builder(
+                                                                        padding:
+                                                                            EdgeInsets.zero,
+                                                                        shrinkWrap:
+                                                                            true,
+                                                                        scrollDirection:
+                                                                            Axis.vertical,
+                                                                        itemCount:
+                                                                            listViewOrderitemsRowList.length,
+                                                                        itemBuilder:
+                                                                            (context,
+                                                                                listViewIndex) {
+                                                                          final listViewOrderitemsRow =
+                                                                              listViewOrderitemsRowList[listViewIndex];
+                                                                          return Align(
+                                                                            alignment:
+                                                                                AlignmentDirectional(-1.0, 0.0),
+                                                                            child:
+                                                                                FutureBuilder<List<ServiceitemsRow>>(
+                                                                              future: FFAppState().orderItemNames(
+                                                                                uniqueQueryKey: listViewOrderitemsRow.id.toString(),
+                                                                                requestFn: () => ServiceitemsTable().querySingleRow(
+                                                                                  queryFn: (q) => q.eq(
+                                                                                    'id',
+                                                                                    listViewOrderitemsRow.serviceitemId,
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                              builder: (context, snapshot) {
+                                                                                // Customize what your widget looks like when it's loading.
+                                                                                if (!snapshot.hasData) {
+                                                                                  return Center(
+                                                                                    child: SizedBox(
+                                                                                      width: 12.0,
+                                                                                      height: 12.0,
+                                                                                      child: CircularProgressIndicator(
+                                                                                        valueColor: AlwaysStoppedAnimation<Color>(
+                                                                                          Color(0x00DC2027),
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                  );
+                                                                                }
+                                                                                List<ServiceitemsRow> textServiceitemsRowList = snapshot.data!;
+
+                                                                                // Return an empty Container when the item does not exist.
+                                                                                if (snapshot.data!.isEmpty) {
+                                                                                  return Container();
+                                                                                }
+                                                                                final textServiceitemsRow = textServiceitemsRowList.isNotEmpty ? textServiceitemsRowList.first : null;
+
+                                                                                return Text(
+                                                                                  '${valueOrDefault<String>(
+                                                                                    listViewOrderitemsRow.quantity.toString(),
+                                                                                    '1',
+                                                                                  )}x ${textServiceitemsRow?.name}',
+                                                                                  style: FlutterFlowTheme.of(context).titleSmall.override(
+                                                                                        fontFamily: 'Montserrat',
+                                                                                        color: FlutterFlowTheme.of(context).primaryText,
+                                                                                        letterSpacing: 0.0,
+                                                                                      ),
+                                                                                );
+                                                                              },
+                                                                            ),
+                                                                          );
+                                                                        },
                                                                       );
                                                                     },
+                                                                  ),
+                                                                  Padding(
+                                                                    padding: EdgeInsetsDirectional
+                                                                        .fromSTEB(
+                                                                            0.0,
+                                                                            16.0,
+                                                                            0.0,
+                                                                            0.0),
+                                                                    child: Row(
+                                                                      mainAxisSize:
+                                                                          MainAxisSize
+                                                                              .max,
+                                                                      mainAxisAlignment:
+                                                                          MainAxisAlignment
+                                                                              .spaceBetween,
+                                                                      children: [
+                                                                        Text(
+                                                                          '${dateTimeFormat("d/M/y", bookListOrdersRow.preferredTimeslot)} ${dateTimeFormat("EEEE", bookListOrdersRow.preferredTimeslot)}, ${dateTimeFormat("jm", functions.converttoSG(bookListOrdersRow.preferredTimeslot!))}',
+                                                                          style: FlutterFlowTheme.of(context)
+                                                                              .titleSmall
+                                                                              .override(
+                                                                                fontFamily: 'Montserrat',
+                                                                                color: FlutterFlowTheme.of(context).primaryText,
+                                                                                letterSpacing: 0.0,
+                                                                                fontWeight: FontWeight.bold,
+                                                                              ),
+                                                                        ),
+                                                                        FlutterFlowIconButton(
+                                                                          borderColor:
+                                                                              Colors.transparent,
+                                                                          borderRadius:
+                                                                              20.0,
+                                                                          borderWidth:
+                                                                              1.0,
+                                                                          buttonSize:
+                                                                              40.0,
+                                                                          icon:
+                                                                              Icon(
+                                                                            Icons.edit_calendar_outlined,
+                                                                            color:
+                                                                                Color(0xCCDC2027),
+                                                                            size:
+                                                                                24.0,
+                                                                          ),
+                                                                          onPressed:
+                                                                              () async {
+                                                                            context.pushNamed(
+                                                                              'SetNewSchedule',
+                                                                              queryParameters: {
+                                                                                'orderId': serializeParam(
+                                                                                  bookListOrdersRow.id,
+                                                                                  ParamType.int,
+                                                                                ),
+                                                                              }.withoutNulls,
+                                                                            );
+                                                                          },
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                  Padding(
+                                                                    padding: EdgeInsetsDirectional
+                                                                        .fromSTEB(
+                                                                            0.0,
+                                                                            16.0,
+                                                                            0.0,
+                                                                            0.0),
+                                                                    child:
+                                                                        Container(
+                                                                      width: double
+                                                                          .infinity,
+                                                                      height:
+                                                                          2.0,
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        color: Color(
+                                                                            0xFFC2C2C2),
+                                                                      ),
+                                                                    ),
                                                                   ),
                                                                 ],
                                                               ),
                                                             ),
-                                                            Padding(
-                                                              padding:
-                                                                  EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                          0.0,
-                                                                          16.0,
-                                                                          0.0,
-                                                                          0.0),
-                                                              child: Container(
-                                                                width: double
-                                                                    .infinity,
-                                                                height: 2.0,
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  color: Color(
-                                                                      0xFFC2C2C2),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
+                                                          );
+                                                        },
                                                       ),
                                                     );
                                                   },
                                                 ),
-                                              );
-                                            },
-                                          ),
-                                        ],
+                                              ],
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                    SingleChildScrollView(
+                                    Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          16.0, 0.0, 16.0, 0.0),
                                       child: Column(
                                         mainAxisSize: MainAxisSize.max,
                                         children: [
@@ -1623,6 +1653,10 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                             child: Container(
                                               width: double.infinity,
                                               height: 2.0,
+                                              constraints: BoxConstraints(
+                                                minWidth: double.infinity,
+                                                maxWidth: double.infinity,
+                                              ),
                                               decoration: BoxDecoration(
                                                 color:
                                                     FlutterFlowTheme.of(context)
@@ -1657,7 +1691,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                           ),
                                           FutureBuilder<List<OrdersRow>>(
                                             future: (_model
-                                                        .requestCompleter2 ??=
+                                                        .requestCompleter4 ??=
                                                     Completer<List<OrdersRow>>()
                                                       ..complete(OrdersTable()
                                                           .queryRows(
@@ -1676,6 +1710,10 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                               'customer_id',
                                                               homePageCustomersRow
                                                                   ?.id,
+                                                            )
+                                                            .neq(
+                                                              'status',
+                                                              'cancelled',
                                                             )
                                                             .order('date'),
                                                         limit: 5,
@@ -1702,14 +1740,521 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                   bookListOrdersRowList =
                                                   snapshot.data!;
 
-                                              if (bookListOrdersRowList
-                                                  .isEmpty) {
-                                                return Container(
-                                                  width: 320.0,
-                                                  child:
-                                                      NohistorybookingsWidget(),
+                                              return RefreshIndicator(
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .tertiary,
+                                                backgroundColor:
+                                                    FlutterFlowTheme.of(context)
+                                                        .accent1,
+                                                onRefresh: () async {
+                                                  safeSetState(() =>
+                                                      _model.requestCompleter4 =
+                                                          null);
+                                                  await _model
+                                                      .waitForRequestCompleted4();
+                                                },
+                                                child: ListView.builder(
+                                                  padding: EdgeInsets.zero,
+                                                  shrinkWrap: true,
+                                                  scrollDirection:
+                                                      Axis.vertical,
+                                                  itemCount:
+                                                      bookListOrdersRowList
+                                                          .length,
+                                                  itemBuilder:
+                                                      (context, bookListIndex) {
+                                                    final bookListOrdersRow =
+                                                        bookListOrdersRowList[
+                                                            bookListIndex];
+                                                    return Container(
+                                                      width: 100.0,
+                                                      decoration:
+                                                          BoxDecoration(),
+                                                      child: Column(
+                                                        mainAxisSize:
+                                                            MainAxisSize.max,
+                                                        children: [
+                                                          Padding(
+                                                            padding:
+                                                                EdgeInsetsDirectional
+                                                                    .fromSTEB(
+                                                                        0.0,
+                                                                        24.0,
+                                                                        0.0,
+                                                                        0.0),
+                                                            child: Row(
+                                                              mainAxisSize:
+                                                                  MainAxisSize
+                                                                      .max,
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
+                                                              children: [
+                                                                Align(
+                                                                  alignment:
+                                                                      AlignmentDirectional(
+                                                                          -1.0,
+                                                                          0.0),
+                                                                  child: Text(
+                                                                    'ref no. ${bookListOrdersRow.id.toString()}',
+                                                                    style: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .bodyMedium
+                                                                        .override(
+                                                                          fontFamily:
+                                                                              'Montserrat',
+                                                                          color:
+                                                                              Color(0xFF6B6B6B),
+                                                                          letterSpacing:
+                                                                              0.0,
+                                                                          fontWeight:
+                                                                              FontWeight.normal,
+                                                                          fontStyle:
+                                                                              FontStyle.italic,
+                                                                        ),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          Row(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .max,
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              if (bookListOrdersRow
+                                                                      .contractId ==
+                                                                  null)
+                                                                Align(
+                                                                  alignment:
+                                                                      AlignmentDirectional(
+                                                                          -1.0,
+                                                                          0.0),
+                                                                  child:
+                                                                      Padding(
+                                                                    padding: EdgeInsetsDirectional
+                                                                        .fromSTEB(
+                                                                            0.0,
+                                                                            4.0,
+                                                                            0.0,
+                                                                            0.0),
+                                                                    child: Text(
+                                                                      'One Time Service',
+                                                                      style: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .titleSmall
+                                                                          .override(
+                                                                            fontFamily:
+                                                                                'Montserrat',
+                                                                            color:
+                                                                                FlutterFlowTheme.of(context).primaryText,
+                                                                            letterSpacing:
+                                                                                0.0,
+                                                                          ),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              if (bookListOrdersRow
+                                                                      .contractId !=
+                                                                  null)
+                                                                Align(
+                                                                  alignment:
+                                                                      AlignmentDirectional(
+                                                                          -1.0,
+                                                                          0.0),
+                                                                  child:
+                                                                      Padding(
+                                                                    padding: EdgeInsetsDirectional
+                                                                        .fromSTEB(
+                                                                            0.0,
+                                                                            4.0,
+                                                                            0.0,
+                                                                            0.0),
+                                                                    child: Text(
+                                                                      'Contract',
+                                                                      style: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .titleSmall
+                                                                          .override(
+                                                                            fontFamily:
+                                                                                'Montserrat',
+                                                                            color:
+                                                                                FlutterFlowTheme.of(context).primaryText,
+                                                                            letterSpacing:
+                                                                                0.0,
+                                                                          ),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              if (bookListOrdersRow
+                                                                      .status !=
+                                                                  'cancelled')
+                                                                Align(
+                                                                  alignment:
+                                                                      AlignmentDirectional(
+                                                                          1.0,
+                                                                          0.0),
+                                                                  child:
+                                                                      FFButtonWidget(
+                                                                    onPressed:
+                                                                        () async {
+                                                                      context
+                                                                          .pushNamed(
+                                                                        'BookingInvoice',
+                                                                        queryParameters:
+                                                                            {
+                                                                          'orderId':
+                                                                              serializeParam(
+                                                                            bookListOrdersRow.id,
+                                                                            ParamType.int,
+                                                                          ),
+                                                                        }.withoutNulls,
+                                                                        extra: <String,
+                                                                            dynamic>{
+                                                                          kTransitionInfoKey:
+                                                                              TransitionInfo(
+                                                                            hasTransition:
+                                                                                true,
+                                                                            transitionType:
+                                                                                PageTransitionType.scale,
+                                                                            alignment:
+                                                                                Alignment.bottomCenter,
+                                                                          ),
+                                                                        },
+                                                                      );
+                                                                    },
+                                                                    text:
+                                                                        'Invoice',
+                                                                    options:
+                                                                        FFButtonOptions(
+                                                                      height:
+                                                                          36.0,
+                                                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                                                          24.0,
+                                                                          0.0,
+                                                                          24.0,
+                                                                          0.0),
+                                                                      iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                                                          0.0,
+                                                                          0.0,
+                                                                          0.0,
+                                                                          0.0),
+                                                                      color: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .info,
+                                                                      textStyle: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .titleSmall
+                                                                          .override(
+                                                                            fontFamily:
+                                                                                'Montserrat',
+                                                                            color:
+                                                                                FlutterFlowTheme.of(context).primaryText,
+                                                                            fontSize:
+                                                                                12.0,
+                                                                            letterSpacing:
+                                                                                0.0,
+                                                                            fontWeight:
+                                                                                FontWeight.w500,
+                                                                          ),
+                                                                      elevation:
+                                                                          3.0,
+                                                                      borderSide:
+                                                                          BorderSide(
+                                                                        color: FlutterFlowTheme.of(context)
+                                                                            .primaryText,
+                                                                        width:
+                                                                            1.0,
+                                                                      ),
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              5.0),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                            ],
+                                                          ),
+                                                          FutureBuilder<
+                                                              List<
+                                                                  OrderitemsRow>>(
+                                                            future: FFAppState()
+                                                                .orderItems(
+                                                              uniqueQueryKey:
+                                                                  bookListOrdersRow
+                                                                      .id
+                                                                      .toString(),
+                                                              requestFn: () =>
+                                                                  OrderitemsTable()
+                                                                      .queryRows(
+                                                                queryFn: (q) =>
+                                                                    q.eq(
+                                                                  'order_id',
+                                                                  bookListOrdersRow
+                                                                      .id,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            builder: (context,
+                                                                snapshot) {
+                                                              // Customize what your widget looks like when it's loading.
+                                                              if (!snapshot
+                                                                  .hasData) {
+                                                                return Center(
+                                                                  child:
+                                                                      SizedBox(
+                                                                    width: 12.0,
+                                                                    height:
+                                                                        12.0,
+                                                                    child:
+                                                                        CircularProgressIndicator(
+                                                                      valueColor:
+                                                                          AlwaysStoppedAnimation<
+                                                                              Color>(
+                                                                        Color(
+                                                                            0x00DC2027),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                );
+                                                              }
+                                                              List<OrderitemsRow>
+                                                                  listViewOrderitemsRowList =
+                                                                  snapshot
+                                                                      .data!;
+
+                                                              return ListView
+                                                                  .builder(
+                                                                padding:
+                                                                    EdgeInsets
+                                                                        .zero,
+                                                                shrinkWrap:
+                                                                    true,
+                                                                scrollDirection:
+                                                                    Axis.vertical,
+                                                                itemCount:
+                                                                    listViewOrderitemsRowList
+                                                                        .length,
+                                                                itemBuilder:
+                                                                    (context,
+                                                                        listViewIndex) {
+                                                                  final listViewOrderitemsRow =
+                                                                      listViewOrderitemsRowList[
+                                                                          listViewIndex];
+                                                                  return Align(
+                                                                    alignment:
+                                                                        AlignmentDirectional(
+                                                                            -1.0,
+                                                                            0.0),
+                                                                    child: FutureBuilder<
+                                                                        List<
+                                                                            ServiceitemsRow>>(
+                                                                      future: FFAppState()
+                                                                          .orderItemNames(
+                                                                        uniqueQueryKey: listViewOrderitemsRow
+                                                                            .id
+                                                                            .toString(),
+                                                                        requestFn:
+                                                                            () =>
+                                                                                ServiceitemsTable().querySingleRow(
+                                                                          queryFn: (q) =>
+                                                                              q.eq(
+                                                                            'id',
+                                                                            listViewOrderitemsRow.serviceitemId,
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      builder:
+                                                                          (context,
+                                                                              snapshot) {
+                                                                        // Customize what your widget looks like when it's loading.
+                                                                        if (!snapshot
+                                                                            .hasData) {
+                                                                          return Center(
+                                                                            child:
+                                                                                SizedBox(
+                                                                              width: 12.0,
+                                                                              height: 12.0,
+                                                                              child: CircularProgressIndicator(
+                                                                                valueColor: AlwaysStoppedAnimation<Color>(
+                                                                                  Color(0x00DC2027),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          );
+                                                                        }
+                                                                        List<ServiceitemsRow>
+                                                                            textServiceitemsRowList =
+                                                                            snapshot.data!;
+
+                                                                        // Return an empty Container when the item does not exist.
+                                                                        if (snapshot
+                                                                            .data!
+                                                                            .isEmpty) {
+                                                                          return Container();
+                                                                        }
+                                                                        final textServiceitemsRow = textServiceitemsRowList.isNotEmpty
+                                                                            ? textServiceitemsRowList.first
+                                                                            : null;
+
+                                                                        return Text(
+                                                                          '${valueOrDefault<String>(
+                                                                            listViewOrderitemsRow.quantity.toString(),
+                                                                            '1',
+                                                                          )}x ${textServiceitemsRow?.name}',
+                                                                          style: FlutterFlowTheme.of(context)
+                                                                              .titleSmall
+                                                                              .override(
+                                                                                fontFamily: 'Montserrat',
+                                                                                color: FlutterFlowTheme.of(context).primaryText,
+                                                                                letterSpacing: 0.0,
+                                                                              ),
+                                                                        );
+                                                                      },
+                                                                    ),
+                                                                  );
+                                                                },
+                                                              );
+                                                            },
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                                EdgeInsetsDirectional
+                                                                    .fromSTEB(
+                                                                        0.0,
+                                                                        16.0,
+                                                                        0.0,
+                                                                        0.0),
+                                                            child: Row(
+                                                              mainAxisSize:
+                                                                  MainAxisSize
+                                                                      .max,
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
+                                                              children: [
+                                                                Text(
+                                                                  '${dateTimeFormat("d/M/y", bookListOrdersRow.scheduledTimeslot)} ${dateTimeFormat("EEEE", bookListOrdersRow.scheduledTimeslot)}, ${dateTimeFormat("jm", bookListOrdersRow.scheduledTimeslot)}',
+                                                                  style: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .titleSmall
+                                                                      .override(
+                                                                        fontFamily:
+                                                                            'Montserrat',
+                                                                        color: FlutterFlowTheme.of(context)
+                                                                            .primaryText,
+                                                                        letterSpacing:
+                                                                            0.0,
+                                                                        fontWeight:
+                                                                            FontWeight.bold,
+                                                                      ),
+                                                                ),
+                                                                if (bookListOrdersRow
+                                                                        .status ==
+                                                                    'cancelled')
+                                                                  Align(
+                                                                    alignment:
+                                                                        AlignmentDirectional(
+                                                                            -1.0,
+                                                                            0.0),
+                                                                    child:
+                                                                        Padding(
+                                                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                                                          0.0,
+                                                                          4.0,
+                                                                          0.0,
+                                                                          0.0),
+                                                                      child:
+                                                                          Text(
+                                                                        'Cancelled',
+                                                                        style: FlutterFlowTheme.of(context)
+                                                                            .titleSmall
+                                                                            .override(
+                                                                              fontFamily: 'Montserrat',
+                                                                              color: FlutterFlowTheme.of(context).primaryText,
+                                                                              letterSpacing: 0.0,
+                                                                              decoration: TextDecoration.underline,
+                                                                            ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                                EdgeInsetsDirectional
+                                                                    .fromSTEB(
+                                                                        0.0,
+                                                                        16.0,
+                                                                        0.0,
+                                                                        0.0),
+                                                            child: Container(
+                                                              width: double
+                                                                  .infinity,
+                                                              height: 2.0,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: Color(
+                                                                    0xFFC2C2C2),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                          FutureBuilder<List<OrdersRow>>(
+                                            future: (_model
+                                                        .requestCompleter3 ??=
+                                                    Completer<List<OrdersRow>>()
+                                                      ..complete(OrdersTable()
+                                                          .queryRows(
+                                                        queryFn: (q) => q
+                                                            .eq(
+                                                              'deleted',
+                                                              false,
+                                                            )
+                                                            .eq(
+                                                              'customer_id',
+                                                              homePageCustomersRow
+                                                                  ?.id,
+                                                            )
+                                                            .eq(
+                                                              'status',
+                                                              'cancelled',
+                                                            )
+                                                            .order('date'),
+                                                        limit: 5,
+                                                      )))
+                                                .future,
+                                            builder: (context, snapshot) {
+                                              // Customize what your widget looks like when it's loading.
+                                              if (!snapshot.hasData) {
+                                                return Center(
+                                                  child: SizedBox(
+                                                    width: 88.0,
+                                                    height: 88.0,
+                                                    child: SpinKitRipple(
+                                                      color:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .tertiary,
+                                                      size: 88.0,
+                                                    ),
+                                                  ),
                                                 );
                                               }
+                                              List<OrdersRow>
+                                                  bookListCancelledOrdersRowList =
+                                                  snapshot.data!;
 
                                               return RefreshIndicator(
                                                 color:
@@ -1719,11 +2264,11 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                     FlutterFlowTheme.of(context)
                                                         .accent1,
                                                 onRefresh: () async {
-                                                  setState(() =>
-                                                      _model.requestCompleter2 =
+                                                  safeSetState(() =>
+                                                      _model.requestCompleter3 =
                                                           null);
                                                   await _model
-                                                      .waitForRequestCompleted2();
+                                                      .waitForRequestCompleted3();
                                                 },
                                                 child: ListView.builder(
                                                   padding: EdgeInsets.fromLTRB(
@@ -1736,13 +2281,13 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                   scrollDirection:
                                                       Axis.vertical,
                                                   itemCount:
-                                                      bookListOrdersRowList
+                                                      bookListCancelledOrdersRowList
                                                           .length,
-                                                  itemBuilder:
-                                                      (context, bookListIndex) {
-                                                    final bookListOrdersRow =
-                                                        bookListOrdersRowList[
-                                                            bookListIndex];
+                                                  itemBuilder: (context,
+                                                      bookListCancelledIndex) {
+                                                    final bookListCancelledOrdersRow =
+                                                        bookListCancelledOrdersRowList[
+                                                            bookListCancelledIndex];
                                                     return Container(
                                                       width: 100.0,
                                                       decoration:
@@ -1775,7 +2320,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                             -1.0,
                                                                             0.0),
                                                                     child: Text(
-                                                                      'ref no. ${bookListOrdersRow.id.toString()}',
+                                                                      'ref no. ${bookListCancelledOrdersRow.id.toString()}',
                                                                       style: FlutterFlowTheme.of(
                                                                               context)
                                                                           .bodyMedium
@@ -1804,7 +2349,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                   MainAxisAlignment
                                                                       .spaceBetween,
                                                               children: [
-                                                                if (bookListOrdersRow
+                                                                if (bookListCancelledOrdersRow
                                                                         .contractId ==
                                                                     null)
                                                                   Align(
@@ -1832,7 +2377,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                       ),
                                                                     ),
                                                                   ),
-                                                                if (bookListOrdersRow
+                                                                if (bookListCancelledOrdersRow
                                                                         .contractId !=
                                                                     null)
                                                                   Align(
@@ -1860,7 +2405,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                       ),
                                                                     ),
                                                                   ),
-                                                                if (bookListOrdersRow
+                                                                if (bookListCancelledOrdersRow
                                                                         .status !=
                                                                     'cancelled')
                                                                   Align(
@@ -1879,7 +2424,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                               {
                                                                             'orderId':
                                                                                 serializeParam(
-                                                                              bookListOrdersRow.id,
+                                                                              bookListCancelledOrdersRow.id,
                                                                               ParamType.int,
                                                                             ),
                                                                           }.withoutNulls,
@@ -1899,7 +2444,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                       options:
                                                                           FFButtonOptions(
                                                                         height:
-                                                                            33.0,
+                                                                            36.0,
                                                                         padding: EdgeInsetsDirectional.fromSTEB(
                                                                             24.0,
                                                                             0.0,
@@ -1943,7 +2488,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                               future: FFAppState()
                                                                   .orderItems(
                                                                 uniqueQueryKey:
-                                                                    bookListOrdersRow
+                                                                    bookListCancelledOrdersRow
                                                                         .id
                                                                         .toString(),
                                                                 requestFn: () =>
@@ -1953,7 +2498,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                       (q) =>
                                                                           q.eq(
                                                                     'order_id',
-                                                                    bookListOrdersRow
+                                                                    bookListCancelledOrdersRow
                                                                         .id,
                                                                   ),
                                                                 ),
@@ -2093,7 +2638,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                         .spaceBetween,
                                                                 children: [
                                                                   Text(
-                                                                    '${dateTimeFormat("d/M/y", bookListOrdersRow.scheduledTimeslot)} ${dateTimeFormat("EEEE", bookListOrdersRow.scheduledTimeslot)}, ${dateTimeFormat("jm", bookListOrdersRow.scheduledTimeslot)}',
+                                                                    '${dateTimeFormat("d/M/y", bookListCancelledOrdersRow.preferredTimeslot)} ${dateTimeFormat("EEEE", bookListCancelledOrdersRow.preferredTimeslot)}, ${dateTimeFormat("jm", bookListCancelledOrdersRow.preferredTimeslot)}',
                                                                     style: FlutterFlowTheme.of(
                                                                             context)
                                                                         .titleSmall
@@ -2108,7 +2653,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                               FontWeight.bold,
                                                                         ),
                                                                   ),
-                                                                  if (bookListOrdersRow
+                                                                  if (bookListCancelledOrdersRow
                                                                           .status ==
                                                                       'cancelled')
                                                                     Align(
@@ -2175,7 +2720,8 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                 ),
                               ),
                             ],
-                          ),
+                          ).animateOnPageLoad(
+                              animationsMap['tabBarOnPageLoadAnimation']!),
                         ),
                       ),
                     ],

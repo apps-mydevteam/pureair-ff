@@ -38,7 +38,7 @@ class _PopUpCancelWidgetState extends State<PopUpCancelWidget> {
     super.initState();
     _model = createModel(context, () => PopUpCancelModel());
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override
@@ -780,15 +780,15 @@ class _PopUpCancelWidgetState extends State<PopUpCancelWidget> {
                                   'Financial Difficulties',
                                   'Booking Error'
                                 ],
-                                onChanged: (val) =>
-                                    setState(() => _model.dropDownValue = val),
+                                onChanged: (val) => safeSetState(
+                                    () => _model.dropDownValue = val),
                                 width: 413.0,
                                 height: 56.0,
                                 textStyle: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
                                       fontFamily: 'Montserrat',
-                                      fontSize: 12.0,
+                                      fontSize: 14.0,
                                       letterSpacing: 0.0,
                                     ),
                                 hintText: 'Select reason',
@@ -876,15 +876,7 @@ class _PopUpCancelWidgetState extends State<PopUpCancelWidget> {
                                       ),
                                     );
 
-                                    context.goNamed(
-                                      'HomePage',
-                                      queryParameters: {
-                                        'devmode': serializeParam(
-                                          false,
-                                          ParamType.bool,
-                                        ),
-                                      }.withoutNulls,
-                                    );
+                                    context.goNamed('HomePage');
                                   }
                                 },
                                 text: 'Cancel Booking',
@@ -896,12 +888,11 @@ class _PopUpCancelWidgetState extends State<PopUpCancelWidget> {
                                       0.0, 0.0, 0.0, 0.0),
                                   color: FlutterFlowTheme.of(context).primary,
                                   textStyle: FlutterFlowTheme.of(context)
-                                      .bodySmall
+                                      .bodyMedium
                                       .override(
                                         fontFamily: 'Montserrat',
                                         color:
                                             FlutterFlowTheme.of(context).info,
-                                        fontSize: 14.0,
                                         letterSpacing: 0.0,
                                       ),
                                   elevation: 3.0,
